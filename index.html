@@ -19,14 +19,1982 @@
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/mobile.css" />
+<style>
+/* ── RESET ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+button { border: none; background: none; cursor: pointer; font: inherit; }
+ul, ol { list-style: none; }
+img, svg { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ── DESIGN TOKENS ── */
+:root {
+  /* Colors */
+  --c-bg:           #0c0c18;
+  --c-bg2:          #13132a;
+  --c-bg3:          #1a1a35;
+  --c-bg4:          #22223f;
+  --c-bg5:          #2a2a4a;
+
+  --c-red:          #e63946;
+  --c-red-light:    #ff5a66;
+  --c-red-dim:      rgba(230, 57, 70, 0.12);
+  --c-red-glow:     rgba(230, 57, 70, 0.25);
+
+  --c-gold:         #c9a84c;
+  --c-gold-light:   #e8c570;
+  --c-gold-dim:     rgba(201, 168, 76, 0.12);
+
+  --c-blue:         #4a90d9;
+  --c-blue-light:   #6db3f2;
+  --c-blue-dim:     rgba(74, 144, 217, 0.12);
+
+  --c-green:        #2ecc71;
+  --c-green-dim:    rgba(46, 204, 113, 0.10);
+  --c-green-glow:   rgba(46, 204, 113, 0.3);
+
+  --c-white:        #eeeef8;
+  --c-muted:        #6b6b90;
+  --c-muted2:       #9090b0;
+
+  --c-border:       rgba(255, 255, 255, 0.055);
+  --c-border2:      rgba(255, 255, 255, 0.10);
+  --c-border3:      rgba(255, 255, 255, 0.15);
+
+  /* Scope colors */
+  --c-marketing:    var(--c-red);
+  --c-operacional:  var(--c-gold);
+  --c-compartilhado: var(--c-blue);
+
+  /* Typography */
+  --f-display: 'DM Serif Display', Georgia, serif;
+  --f-body:    'DM Sans', system-ui, sans-serif;
+  --f-mono:    'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* Border radius */
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  20px;
+  --r-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md:  0 4px 24px rgba(0,0,0,0.45);
+  --shadow-lg:  0 8px 48px rgba(0,0,0,0.6);
+  --shadow-glow-red:   0 0 20px rgba(230,57,70,0.3);
+  --shadow-glow-green: 0 0 12px rgba(46,204,113,0.4);
+
+  /* Layout */
+  --max-w: 1380px;
+  --header-h: 72px;
+  --detail-header-h: 160px;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 150ms;
+  --t-mid:  250ms;
+  --t-slow: 400ms;
+}
+
+/* ── KEYFRAMES ── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes checkPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3) rotate(-8deg); }
+  70%  { transform: scale(0.9) rotate(4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--c-green-glow); }
+  50%       { box-shadow: 0 0 0 8px transparent; }
+}
+
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(8px) scale(0.96); }
+}
+
+@keyframes floatBg {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%       { transform: translate(20px, -15px) rotate(2deg); }
+  66%       { transform: translate(-10px, 10px) rotate(-1deg); }
+}
+
+@keyframes staggerFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(60px) rotate(360deg); opacity: 0; }
+}
+
+/* ── UTILITY ANIMATION CLASSES ── */
+
+.anim-fade-up   { animation: fadeUp  var(--t-slow) var(--ease-out) both; }
+.anim-fade-in   { animation: fadeIn  var(--t-mid)  var(--ease-out) both; }
+.anim-scale-in  { animation: scaleIn var(--t-mid)  var(--ease-out) both; }
+.anim-slide-right { animation: slideRight var(--t-slow) var(--ease-out) both; }
+
+/* Stagger delays for grid children */
+.stagger-1  { animation-delay: 40ms; }
+.stagger-2  { animation-delay: 80ms; }
+.stagger-3  { animation-delay: 120ms; }
+.stagger-4  { animation-delay: 160ms; }
+.stagger-5  { animation-delay: 200ms; }
+.stagger-6  { animation-delay: 240ms; }
+.stagger-7  { animation-delay: 280ms; }
+.stagger-8  { animation-delay: 320ms; }
+.stagger-9  { animation-delay: 360ms; }
+.stagger-10 { animation-delay: 400ms; }
+.stagger-11 { animation-delay: 440ms; }
+.stagger-12 { animation-delay: 480ms; }
+.stagger-13 { animation-delay: 520ms; }
+.stagger-14 { animation-delay: 560ms; }
+
+/* Phase item stagger */
+.item-anim { animation: staggerFadeUp var(--t-mid) var(--ease-out) both; }
+
+/* Check animation */
+.check-pop { animation: checkPop 0.4s var(--ease-spring); }
+
+/* Shimmer loading */
+.shimmer {
+  background: linear-gradient(90deg,
+    var(--c-bg3) 25%,
+    var(--c-bg4) 50%,
+    var(--c-bg3) 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Progress bar entrance */
+.progress-bar-animate {
+  animation: progressFill 0.8s var(--ease-out) both;
+}
+
+/* ── BASE ── */
+body {
+  background: var(--c-bg);
+  color: var(--c-white);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; opacity: 0.5;
+}
+
+/* Ambient glow blobs */
+.bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatBg 18s ease-in-out infinite;
+}
+.bg-blob-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(230,57,70,0.06) 0%, transparent 70%);
+  top: -100px; left: -100px;
+  animation-delay: 0s;
+}
+.bg-blob-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(74,144,217,0.05) 0%, transparent 70%);
+  bottom: 0; right: -80px;
+  animation-delay: -6s;
+}
+.bg-blob-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  animation-delay: -12s;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 200;
+  height: var(--header-h);
+  background: rgba(12, 12, 24, 0.85);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid var(--c-border2);
+  box-shadow: 0 1px 0 var(--c-border);
+}
+.header-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-8);
+}
+
+/* Logo */
+.logo { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; }
+.logo-mark {
+  width: 38px; height: 38px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--c-red), #8a0f1a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-display); font-size: 17px; color: #fff;
+  box-shadow: var(--shadow-glow-red);
+  flex-shrink: 0;
+  transition: transform var(--t-mid) var(--ease-spring);
+}
+.logo-mark:hover { transform: rotate(-5deg) scale(1.05); }
+.logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+.logo-name { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-white); }
+.logo-sub  { font-size: 10px; color: var(--c-muted); letter-spacing: 0.04em; }
+
+/* Header center */
+.header-center { flex: 1; text-align: center; }
+.project-name { font-family: var(--f-display); font-size: 18px; line-height: 1.2; }
+.project-sub  { font-size: 11px; color: var(--c-muted); margin-top: 2px; letter-spacing: 0.03em; }
+
+/* Global progress pill */
+.global-pill {
+  display: flex; align-items: center; gap: var(--sp-3);
+  background: var(--c-bg3);
+  border: 1px solid var(--c-border2);
+  border-radius: var(--r-pill);
+  padding: 7px 14px 7px 10px;
+  flex-shrink: 0;
+}
+.global-pill-label { font-size: 11px; color: var(--c-muted); white-space: nowrap; }
+.global-pill-track {
+  width: 88px; height: 5px;
+  background: var(--c-bg5); border-radius: 3px; overflow: hidden;
+}
+.global-pill-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--c-red), var(--c-gold));
+  transition: width 0.5s var(--ease-out);
+  width: 0%;
+}
+.global-pill-pct {
+  font-family: var(--f-mono); font-size: 12px; font-weight: 500;
+  color: var(--c-white); min-width: 30px; text-align: right;
+}
+
+/* ── PAGES ── */
+#app { position: relative; z-index: 1; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── OVERVIEW ── */
+.overview {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--sp-12) var(--sp-8);
+}
+
+/* Hero */
+.hero { margin-bottom: var(--sp-12); }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--f-mono); font-size: 11px; color: var(--c-red);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: var(--sp-4);
+}
+.hero-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-red); }
+.hero h1 {
+  font-family: var(--f-display);
+  font-size: clamp(36px, 5.5vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--sp-4);
+}
+.hero h1 em { color: var(--c-red); font-style: italic; }
+.hero p {
+  color: var(--c-muted2); font-size: 16px;
+  max-width: 520px; line-height: 1.75;
+}
+.hero-stats {
+  display: flex; gap: var(--sp-8); margin-top: var(--sp-6);
+  flex-wrap: wrap;
+}
+.hero-stat { display: flex; flex-direction: column; gap: 2px; }
+.hero-stat-num {
+  font-family: var(--f-display); font-size: 32px; color: var(--c-white); line-height: 1;
+}
+.hero-stat-label { font-size: 12px; color: var(--c-muted); }
+
+/* Scope strip */
+.scope-strip {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4); margin-bottom: var(--sp-10);
+}
+.scope-card {
+  background: var(--c-bg2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: var(--sp-5);
+  transition: border-color var(--t-mid), transform var(--t-mid) var(--ease-out);
+}
+.scope-card:hover { border-color: var(--c-border3); transform: translateY(-2px); }
+.scope-card-top { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+.scope-icon {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.scope-icon.marketing    { background: var(--c-red-dim); }
+.scope-icon.operacional  { background: var(--c-gold-dim); }
+.scope-icon.compartilhado{ background: var(--c-blue-dim); }
+.scope-label { font-size: 11px; color: var(--c-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.scope-name  { font-size: 13px; font-weight: 600; color: var(--c-white); }
+.scope-track { height: 4px; background: var(--c-bg5); border-radius: 2px; overflow: hidden; margin-bottom: var(--sp-2); }
+.scope-fill  { height: 100%; border-radius: 2px; transition: width 0.6s var(--ease-out); width: 0%; }
+.scope-fill.marketing    { background: linear-gradient(90deg, var(--c-red), var(--c-red-light)); }
+.scope-fill.operacional  { background: linear-gradient(90deg, var(--c-gold), var(--c-gold-light)); }
+.scope-fill.compartilhado{ background: linear-gradient(90deg, var(--c-blue), var(--c-blue-light)); }
+.scope-meta { font-size: 12px; color: var(--c-muted); display: flex; justify-content: space-between; }
+.scope-meta-pct { font-family: var(--f-mono); color: var(--c-white); font-size: 12px; }
+
+/* Grid */
+.grid-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--c-muted); font-weight: 600; margin-bottom: var(--sp-4);
+}
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: var(--sp-3);
+}
+
+/* Legend */
+.legend {
+  display: flex; align-items: center; gap: var(--sp-5);
+  flex-wrap: wrap; margin-top: var(--sp-10);
+  padding-top: var(--sp-6); border-top: 1px solid var(--c-border);
+}
+.legend-item { display: flex; align-items: center; gap: var(--sp-2); font-size: 12px; color: var(--c-muted); }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* ── DETAIL PAGE ── */
+.detail-sticky {
+  position: sticky; top: var(--header-h); z-index: 100;
+  background: rgba(12, 12, 24, 0.9);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--c-border2);
+}
+.detail-sticky-inner {
+  max-width: var(--max-w); margin: 0 auto;
+  padding: var(--sp-5) var(--sp-8);
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  color: var(--c-muted); font-size: 13px; font-weight: 500;
+  transition: color var(--t-fast), transform var(--t-fast);
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-1) 0;
+}
+.back-btn:hover { color: var(--c-white); transform: translateX(-3px); }
+.back-btn svg { width: 15px; height: 15px; }
+
+.detail-head-row {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+.detail-eyebrow {
+  font-family: var(--f-mono); font-size: 11px;
+  color: var(--c-muted); margin-bottom: var(--sp-2);
+}
+.detail-title {
+  font-family: var(--f-display);
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.2; margin-bottom: var(--sp-3);
+}
+.detail-badges { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.badge {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  background: var(--c-bg4); border: 1px solid var(--c-border2);
+  border-radius: var(--r-pill); padding: 4px 10px;
+  font-size: 11px; color: var(--c-muted2);
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Detail progress */
+.detail-progress-wrap {
+  flex-shrink: 0; min-width: 200px;
+}
+.detail-progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--c-muted); margin-bottom: var(--sp-2);
+}
+.detail-progress-label span:last-child {
+  font-family: var(--f-mono); color: var(--c-white);
+}
+.detail-progress-track {
+  height: 6px; background: var(--c-bg5); border-radius: 3px; overflow: hidden;
+}
+.detail-progress-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.5s var(--ease-out); width: 0%;
+}
+.detail-progress-fill.marketing    { background: linear-gradient(90deg, var(--c-red), var(--c-red-light)); }
+.detail-progress-fill.operacional  { background: linear-gradient(90deg, var(--c-gold), var(--c-gold-light)); }
+.detail-progress-fill.compartilhado{ background: linear-gradient(90deg, var(--c-blue), var(--c-blue-light)); }
+
+/* Detail content */
+.detail-content {
+  max-width: var(--max-w); margin: 0 auto;
+  padding: var(--sp-10) var(--sp-8);
+}
+
+/* Phase */
+.phase-section { margin-bottom: var(--sp-10); }
+.phase-header {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--c-border);
+}
+.phase-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.phase-name {
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 600; color: var(--c-muted);
+}
+.phase-mini-progress {
+  margin-left: auto; display: flex; align-items: center; gap: var(--sp-2);
+}
+.phase-mini-track {
+  width: 56px; height: 3px; background: var(--c-bg5); border-radius: 2px; overflow: hidden;
+}
+.phase-mini-fill {
+  height: 100%; border-radius: 2px; transition: width 0.4s var(--ease-out); width: 0%;
+}
+.phase-mini-label {
+  font-family: var(--f-mono); font-size: 10px; color: var(--c-muted);
+  white-space: nowrap;
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: var(--sp-6); right: var(--sp-6);
+  z-index: 9000;
+  background: var(--c-bg3); border: 1px solid var(--c-border3);
+  border-radius: var(--r-lg); padding: var(--sp-3) var(--sp-5);
+  box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: var(--sp-3);
+  max-width: 320px; pointer-events: none;
+  opacity: 0; transform: translateY(16px) scale(0.96);
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+}
+.toast.show { opacity: 1; transform: translateY(0) scale(1); }
+.toast-icon { font-size: 16px; flex-shrink: 0; }
+.toast-text { font-size: 13px; color: var(--c-white); line-height: 1.4; }
+
+/* Completion banner */
+.done-banner {
+  background: linear-gradient(135deg, rgba(46,204,113,0.08), rgba(46,204,113,0.03));
+  border: 1px solid rgba(46,204,113,0.2);
+  border-radius: var(--r-lg); padding: var(--sp-6);
+  text-align: center; margin-bottom: var(--sp-8);
+  display: none;
+}
+.done-banner.show { display: block; animation: scaleIn var(--t-mid) var(--ease-out); }
+.done-banner-icon { font-size: 36px; margin-bottom: var(--sp-3); }
+.done-banner h3 { font-family: var(--f-display); font-size: 22px; color: var(--c-green); margin-bottom: var(--sp-2); }
+.done-banner p  { font-size: 14px; color: var(--c-muted2); }
+
+/* Confetti dot */
+.confetti-dot {
+  position: fixed; pointer-events: none; z-index: 8000;
+  width: 7px; height: 7px; border-radius: 2px;
+  animation: confettiFall 0.8s var(--ease-out) forwards;
+}
+
+/* ── CHECKLIST CARD (overview grid) ── */
+.cl-card {
+  position: relative; overflow: hidden;
+  background: var(--c-bg2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+  cursor: pointer;
+  transition:
+    border-color var(--t-mid),
+    transform var(--t-mid) var(--ease-out),
+    box-shadow var(--t-mid);
+  will-change: transform;
+}
+.cl-card:hover {
+  border-color: var(--c-border3);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.cl-card:active { transform: translateY(-1px); }
+
+/* Accent line */
+.cl-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+  opacity: 0;
+  transition: opacity var(--t-mid);
+}
+.cl-card:hover::before { opacity: 1; }
+.cl-card.marketing::before    { background: var(--c-red); }
+.cl-card.operacional::before  { background: var(--c-gold); }
+.cl-card.compartilhado::before{ background: var(--c-blue); }
+
+/* Completed state shimmer */
+.cl-card.all-done::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(46,204,113,0.04) 0%, transparent 60%);
+  border-radius: var(--r-lg);
+  pointer-events: none;
+}
+
+/* Card num */
+.cl-num {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--f-mono); font-size: 10px; color: var(--c-muted);
+  margin-bottom: var(--sp-3); letter-spacing: 0.06em;
+}
+.cl-num-dot {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+}
+.cl-num-dot.marketing    { background: var(--c-red); }
+.cl-num-dot.operacional  { background: var(--c-gold); }
+.cl-num-dot.compartilhado{ background: var(--c-blue); }
+
+/* Card title */
+.cl-title {
+  font-size: 14px; font-weight: 600; color: var(--c-white);
+  line-height: 1.45; margin-bottom: var(--sp-4);
+  min-height: 40px;
+}
+
+/* Card footer */
+.cl-footer {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: var(--sp-3);
+}
+.cl-count  { font-size: 11px; color: var(--c-muted); }
+.cl-pct    { font-family: var(--f-mono); font-size: 12px; font-weight: 500; color: var(--c-white); }
+
+/* Card progress */
+.cl-track {
+  height: 4px; background: var(--c-bg5); border-radius: 2px; overflow: hidden;
+}
+.cl-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.5s var(--ease-out); width: 0%;
+}
+.marketing    .cl-fill { background: linear-gradient(90deg, var(--c-red), var(--c-red-light)); }
+.operacional  .cl-fill { background: linear-gradient(90deg, var(--c-gold), var(--c-gold-light)); }
+.compartilhado.cl-fill { background: linear-gradient(90deg, var(--c-blue), var(--c-blue-light)); }
+
+/* Arrow */
+.cl-arrow {
+  position: absolute; right: var(--sp-4); top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  opacity: 0; font-size: 16px; color: var(--c-muted);
+  transition: opacity var(--t-mid), transform var(--t-mid);
+}
+.cl-card:hover .cl-arrow {
+  opacity: 1; transform: translateY(-50%) translateX(0);
+}
+
+/* Done badge */
+.cl-done-badge {
+  position: absolute; top: var(--sp-3); right: var(--sp-3);
+  background: var(--c-green-dim); color: var(--c-green);
+  border-radius: var(--r-pill); padding: 2px 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+  opacity: 0; transition: opacity var(--t-mid);
+}
+.cl-card.all-done .cl-done-badge { opacity: 1; }
+
+/* ── ITEM ROW ── */
+.item-row {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: 13px var(--sp-4);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  background: var(--c-bg2);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    transform var(--t-fast);
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.item-row:hover {
+  border-color: var(--c-border2);
+  background: var(--c-bg3);
+}
+.item-row:active { transform: scale(0.99); }
+
+/* Completed */
+.item-row.completed {
+  background: var(--c-bg3);
+  border-color: rgba(46,204,113,0.08);
+}
+
+/* Checkbox */
+.item-cb {
+  width: 22px; height: 22px; min-width: 22px;
+  border-radius: var(--r-sm);
+  border: 2px solid var(--c-bg5);
+  background: var(--c-bg4);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+  transition: background var(--t-mid), border-color var(--t-mid), box-shadow var(--t-mid);
+}
+.item-row:hover .item-cb {
+  border-color: var(--c-border3);
+}
+.item-row.completed .item-cb {
+  background: var(--c-green);
+  border-color: var(--c-green);
+  box-shadow: var(--shadow-glow-green);
+  animation: checkPop 0.4s var(--ease-spring);
+}
+.cb-check {
+  display: none; color: #fff;
+  font-size: 13px; font-weight: 800; line-height: 1;
+}
+.cb-empty {
+  display: block; width: 7px; height: 7px;
+  border-radius: 2px; background: var(--c-bg5);
+  transition: background var(--t-fast);
+}
+.item-row:hover .cb-empty { background: var(--c-muted); }
+.item-row.completed .cb-check { display: block; }
+.item-row.completed .cb-empty { display: none; }
+
+/* Item text */
+.item-text {
+  flex: 1; font-size: 14px; color: var(--c-white);
+  line-height: 1.55;
+  transition: color var(--t-mid);
+}
+.item-row.completed .item-text {
+  color: var(--c-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255,255,255,0.15);
+  text-decoration-thickness: 1px;
+}
+
+/* Type badge */
+.item-type {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 7px; border-radius: var(--r-sm);
+  flex-shrink: 0; margin-top: 2px;
+}
+.item-type.A { background: var(--c-blue-dim); color: var(--c-blue); }
+.item-type.E { background: var(--c-green-dim); color: var(--c-green); }
+
+/* ── TYPE BADGE (legend) ── */
+.type-badge {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: var(--r-sm);
+}
+.type-badge.A { background: var(--c-blue-dim);  color: var(--c-blue); }
+.type-badge.E { background: var(--c-green-dim); color: var(--c-green); }
+
+/* ── TABLET ── */
+@media (max-width: 900px) {
+  :root { --header-h: 64px; }
+
+  .header-inner { padding: 0 var(--sp-5); gap: var(--sp-3); }
+  .logo-text { display: none; }
+
+  .header-center .project-sub { display: none; }
+  .header-center .project-name { font-size: 15px; }
+
+  .global-pill-label { display: none; }
+  .global-pill-track { width: 60px; }
+
+  .overview { padding: var(--sp-8) var(--sp-5); }
+
+  .scope-strip { grid-template-columns: 1fr; gap: var(--sp-3); }
+  .scope-card { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: var(--sp-2) var(--sp-3); align-items: center; }
+  .scope-card-top { grid-column: 1; grid-row: 1 / 3; align-items: flex-start; }
+  .scope-track { grid-column: 2; grid-row: 1; margin-bottom: 0; }
+  .scope-meta { grid-column: 2; grid-row: 2; }
+
+  .hero h1 { font-size: 36px; }
+  .hero-stats { gap: var(--sp-5); }
+  .hero-stat-num { font-size: 26px; }
+
+  .checklist-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .detail-sticky-inner { padding: var(--sp-4) var(--sp-5); }
+  .detail-head-row { gap: var(--sp-4); }
+  .detail-title { font-size: 20px; }
+  .detail-progress-wrap { min-width: 160px; }
+  .detail-content { padding: var(--sp-8) var(--sp-5); }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  :root { --header-h: 58px; }
+
+  .header-inner { padding: 0 var(--sp-4); }
+  .header-center { display: none; }
+  .global-pill { padding: 6px 10px 6px 8px; gap: var(--sp-2); }
+  .global-pill-track { width: 50px; }
+
+  .overview { padding: var(--sp-6) var(--sp-4); }
+
+  .hero { margin-bottom: var(--sp-8); }
+  .hero h1 { font-size: 30px; }
+  .hero p { font-size: 14px; }
+  .hero-stats { gap: var(--sp-4); }
+  .hero-stat-num { font-size: 24px; }
+  .hero-stat-label { font-size: 11px; }
+
+  .scope-strip { gap: var(--sp-3); }
+  .scope-card { padding: var(--sp-4); }
+  .scope-icon { width: 28px; height: 28px; font-size: 13px; }
+  .scope-label { font-size: 10px; }
+  .scope-name { font-size: 12px; }
+
+  .checklist-grid { grid-template-columns: 1fr; gap: var(--sp-2); }
+  .cl-card { padding: var(--sp-4); }
+  .cl-title { font-size: 13px; min-height: unset; }
+  .cl-arrow { display: none; }
+
+  .detail-sticky-inner { padding: var(--sp-3) var(--sp-4); }
+  .back-btn { font-size: 12px; margin-bottom: var(--sp-3); }
+  .detail-head-row { flex-direction: column; align-items: flex-start; gap: var(--sp-3); }
+  .detail-title { font-size: 18px; }
+  .detail-progress-wrap { width: 100%; min-width: unset; }
+  .detail-eyebrow { font-size: 10px; }
+
+  .detail-content { padding: var(--sp-6) var(--sp-4); }
+  .phase-section { margin-bottom: var(--sp-8); }
+  .phase-name { font-size: 10px; }
+  .phase-mini-track { width: 40px; }
+
+  .item-row { padding: 11px var(--sp-3); }
+  .item-text { font-size: 13px; }
+  .item-type { font-size: 9px; padding: 2px 6px; }
+  .item-cb { width: 20px; height: 20px; min-width: 20px; }
+
+  .legend { gap: var(--sp-3); }
+  .legend-item { font-size: 11px; }
+
+  .toast {
+    bottom: var(--sp-4); right: var(--sp-4); left: var(--sp-4);
+    max-width: unset;
+  }
+}
+
+/* ── VERY SMALL ── */
+@media (max-width: 360px) {
+  .hero h1 { font-size: 26px; }
+  .hero-stats { flex-direction: column; gap: var(--sp-3); }
+}
+
+/* ── TALL SCREENS / LANDSCAPE ── */
+@media (min-width: 1400px) {
+  .checklist-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+/* ── TOUCH DEVICE OPTIMIZATIONS ── */
+@media (hover: none) {
+  .cl-card:hover { transform: none; box-shadow: none; }
+  .cl-card:active { transform: scale(0.98); }
+  .cl-arrow { display: none; }
+  .item-row:hover { background: var(--c-bg2); border-color: transparent; }
+  .item-row:active { background: var(--c-bg3); }
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .bg-blob { animation: none; }
+}
+
+/* ── PRINT ── */
+@media print {
+  .header, .back-btn, .toast, .bg-blob { display: none; }
+  body { background: white; color: black; }
+  .item-row { border: 1px solid #ddd; margin-bottom: 4px; }
+  .overview, .detail-content { padding: 16px; }
+}
+
+</style>
 </head>
 <body>
   <div id="app"></div>
 
   <!-- Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
+  
+  
+  
+  
+<script>
+/* ── CHECKLISTS DATA ── */
+const CHECKLISTS = [
+  {
+    id: 1, num: '01', scope: 'marketing',
+    title: 'Briefing e Informações do Empreendimento',
+    objective: 'Garantir que a Paleta tem tudo que precisa para iniciar a ativação',
+    responsible: 'Paleta + Construtora Arruda',
+    phases: [
+      { label: 'FASE 1 — Antes da reunião de kickoff', items: [
+        { text: 'Confirmar data prevista de entrega da obra', type: 'A' },
+        { text: 'Confirmar se a administradora já existe ou está sendo criada', type: 'A' },
+        { text: 'Confirmar número total de unidades, metragens e andares', type: 'A' },
+      ]},
+      { label: 'FASE 2 — Reunião de kickoff', items: [
+        { text: 'Realizar reunião de kickoff com o Robério', type: 'A' },
+        { text: 'Registrar visão do CEO sobre o posicionamento do Amazaki', type: 'E' },
+        { text: 'Confirmar data prevista de lançamento / início de captação de investidores', type: 'A' },
+        { text: 'Confirmar perfil de locatário esperado (restaurante, loja, serviço)', type: 'A' },
+        { text: 'Identificar âncoras comerciais previstas', type: 'A' },
+        { text: 'Confirmar orçamento disponível para tráfego pago', type: 'A' },
+      ]},
+      { label: 'FASE 3 — Até 4 dias após o kickoff', items: [
+        { text: 'Receber plantas baixas de todas as tipologias de salas', type: 'E' },
+        { text: 'Receber memorial descritivo do empreendimento', type: 'E' },
+        { text: 'Receber fotos do terreno e entorno atual', type: 'E' },
+        { text: 'Confirmar condições de pagamento disponíveis', type: 'A' },
+        { text: 'Confirmar estimativa de valor de aluguel por m²', type: 'A' },
+        { text: 'Receber mapeamento de concorrentes que a construtora já tem', type: 'E' },
+        { text: 'Receber informações sobre histórico da administradora (se houver)', type: 'E' },
+      ]},
+      { label: 'FASE 4 — Quando disponível (não bloqueia o início)', items: [
+        { text: 'Receber tabela de preços ou faixa de valor por m²', type: 'E' },
+        { text: 'Receber renders ou perspectivas externas/internas', type: 'E' },
+        { text: 'Confirmar modelo de gestão diária do mall', type: 'A' },
+        { text: 'Confirmar vagas de garagem por unidade', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 2, num: '02', scope: 'marketing',
+    title: 'Identidade Visual e Comunicação',
+    objective: 'Garantir que o Amazaki tem uma identidade visual definida antes de qualquer material ser produzido',
+    responsible: 'Paleta + Construtora Arruda',
+    phases: [
+      { label: 'DEFINIÇÃO', items: [
+        { text: 'Confirmar se já existe logo e identidade visual do Amazaki', type: 'A' },
+        { text: 'Definir direção estética da marca (temática japonesa, moderna, híbrida)', type: 'A' },
+        { text: 'Receber referências visuais aprovadas pelo Robério', type: 'E' },
+        { text: 'Definir paleta de cores, tipografia e tom visual', type: 'A' },
+      ]},
+      { label: 'PRODUÇÃO', items: [
+        { text: 'Desenvolver ou validar logo do Amazaki', type: 'E' },
+        { text: 'Criar manual de identidade visual básico', type: 'E' },
+        { text: 'Definir template padrão para redes sociais', type: 'E' },
+        { text: 'Definir template para materiais impressos (folder, banner)', type: 'E' },
+        { text: 'Aprovação da identidade visual pelo Robério', type: 'A' },
+      ]},
+      { label: 'APLICAÇÃO', items: [
+        { text: 'Aplicar identidade visual na landing page', type: 'A' },
+        { text: 'Aplicar identidade visual nos materiais comerciais', type: 'A' },
+        { text: 'Aplicar identidade visual nas peças de tráfego pago', type: 'A' },
+        { text: 'Definir layout do tapume com comunicação visual do Amazaki', type: 'E' },
+        { text: 'Definir layout do totem externo do mall', type: 'E' },
+      ]},
+    ]
+  },
+  {
+    id: 3, num: '03', scope: 'marketing',
+    title: 'Presença Digital',
+    objective: 'Estruturar todos os canais digitais do Amazaki antes do lançamento',
+    responsible: 'Paleta',
+    phases: [
+      { label: 'CONTAS E ACESSOS', items: [
+        { text: 'Verificar se redes sociais do Amazaki já existem ou criar do zero', type: 'A' },
+        { text: 'Criar perfil no Instagram do Amazaki', type: 'A' },
+        { text: 'Criar página no Facebook do Amazaki', type: 'A' },
+        { text: 'Definir e registrar domínio da landing page', type: 'A' },
+        { text: 'Criar e-mail comercial do empreendimento', type: 'A' },
+        { text: 'Configurar conta de Meta Ads (ou vincular existente)', type: 'A' },
+        { text: 'Configurar conta de Google Ads (se aplicável)', type: 'A' },
+      ]},
+      { label: 'CONFIGURAÇÃO', items: [
+        { text: 'Instalar pixel do Meta na landing page', type: 'A' },
+        { text: 'Configurar Google Tag Manager', type: 'A' },
+        { text: 'Integrar formulário da landing page ao CRM', type: 'A' },
+        { text: 'Configurar notificação de lead em tempo real (WhatsApp/e-mail)', type: 'A' },
+        { text: 'Configurar perfil do WhatsApp Business do Amazaki', type: 'A' },
+      ]},
+      { label: 'CONTEÚDO INICIAL', items: [
+        { text: 'Preencher bio e informações dos perfis nas redes sociais', type: 'A' },
+        { text: 'Publicar primeiros 3 posts de apresentação do Amazaki', type: 'E' },
+        { text: 'Configurar mensagem automática de boas-vindas no WhatsApp Business', type: 'A' },
+        { text: 'Definir frequência e calendário inicial de postagens', type: 'E' },
+      ]},
+    ]
+  },
+  {
+    id: 4, num: '04', scope: 'marketing',
+    title: 'Lançamento',
+    objective: 'Garantir que todas as ações de marketing para o lançamento estejam prontas e coordenadas',
+    responsible: 'Paleta + Construtora Arruda',
+    phases: [
+      { label: 'PRÉ-LANÇAMENTO', items: [
+        { text: 'Definir data oficial do lançamento com o Robério', type: 'A' },
+        { text: 'Definir formato do lançamento (evento, digital ou híbrido)', type: 'A' },
+        { text: 'Criar campanha de aquecimento nas redes sociais (teaser)', type: 'E' },
+        { text: 'Ativar lista de espera na landing page antes do lançamento', type: 'A' },
+        { text: 'Disparar campanha de tráfego pago de pré-lançamento', type: 'A' },
+        { text: 'Preparar lista de convidados / prospects para o evento', type: 'E' },
+      ]},
+      { label: 'DIA DO LANÇAMENTO', items: [
+        { text: 'Publicar conteúdo de lançamento nas redes sociais', type: 'A' },
+        { text: 'Ativar campanhas de tráfego pago com verba de lançamento', type: 'A' },
+        { text: 'Garantir presença de equipe comercial para atender leads', type: 'A' },
+        { text: 'Registrar o evento em foto e vídeo para conteúdo posterior', type: 'E' },
+      ]},
+      { label: 'PÓS-LANÇAMENTO', items: [
+        { text: 'Publicar conteúdo de repercussão do lançamento', type: 'E' },
+        { text: 'Seguir up com todos os leads captados no evento', type: 'A' },
+        { text: 'Avaliar performance das campanhas e ajustar', type: 'A' },
+        { text: 'Produzir relatório de resultados do lançamento', type: 'E' },
+      ]},
+    ]
+  },
+  {
+    id: 5, num: '05', scope: 'marketing',
+    title: 'Materiais Comerciais',
+    objective: 'Produzir todos os materiais que o time comercial vai usar para apresentar o Amazaki ao investidor',
+    responsible: 'Paleta',
+    phases: [
+      { label: 'MATERIAIS DIGITAIS PRIORITÁRIOS', items: [
+        { text: 'Produzir estudo de rentabilidade para o investidor', type: 'E' },
+        { text: 'Produzir folder digital (1 página) para envio por WhatsApp', type: 'E' },
+        { text: 'Produzir apresentação comercial completa (PDF/PowerPoint)', type: 'E' },
+        { text: 'Criar modelo de proposta de investimento personalizada', type: 'E' },
+      ]},
+      { label: 'CONTEÚDO PARA REDES SOCIAIS', items: [
+        { text: 'Produzir pack de posts de lançamento (mínimo 6 peças)', type: 'E' },
+        { text: 'Produzir sequência de stories de lançamento (3 a 5)', type: 'E' },
+        { text: 'Produzir vídeo de apresentação do empreendimento', type: 'E' },
+        { text: 'Produzir peças para campanhas de tráfego pago', type: 'E' },
+      ]},
+      { label: 'MATERIAIS DE SUPORTE COMERCIAL', items: [
+        { text: 'Criar script de abordagem para o time comercial', type: 'E' },
+        { text: 'Criar FAQ do investidor (perguntas frequentes com respostas)', type: 'E' },
+        { text: 'Configurar assinatura de e-mail do time comercial', type: 'E' },
+        { text: 'Aprovação de todos os materiais pelo Robério antes de distribuir', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 6, num: '06', scope: 'operacional',
+    title: 'Jurídico e Documental',
+    objective: 'Garantir que toda a estrutura legal do Amazaki está resolvida antes da operação',
+    responsible: 'Construtora Arruda',
+    phases: [
+      { label: 'ESTRUTURA JURÍDICA', items: [
+        { text: 'Definir se o Amazaki abrirá CNPJ próprio ou operará sob a Construtora Arruda', type: 'A' },
+        { text: 'Abrir CNPJ do Amazaki (se aplicável)', type: 'A' },
+        { text: 'Definir regime tributário adequado para o modelo de locação', type: 'A' },
+        { text: 'Contratar assessoria jurídica especializada em direito imobiliário', type: 'A' },
+      ]},
+      { label: 'CONTRATOS', items: [
+        { text: 'Elaborar modelo de contrato de compra e venda da sala para o investidor', type: 'E' },
+        { text: 'Elaborar modelo de contrato de locação para os lojistas', type: 'E' },
+        { text: 'Elaborar contrato de gestão com a administradora do mall', type: 'E' },
+        { text: 'Definir cláusulas de reajuste, carência e garantias nos contratos de locação', type: 'A' },
+        { text: 'Validar contratos com assessoria jurídica', type: 'A' },
+      ]},
+      { label: 'LICENÇAS E ALVARÁS', items: [
+        { text: 'Verificar aprovação do projeto junto à prefeitura de Manaus', type: 'A' },
+        { text: 'Dar entrada no alvará de construção (se ainda não houver)', type: 'A' },
+        { text: 'Mapear licenças necessárias para funcionamento do mall', type: 'A' },
+        { text: 'Verificar exigências do Corpo de Bombeiros para o projeto', type: 'A' },
+        { text: 'Verificar exigências de acessibilidade (NBR 9050)', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 7, num: '07', scope: 'operacional',
+    title: 'Infraestrutura Física',
+    objective: 'Garantir que a infraestrutura física do Amazaki está pronta para receber locatários e visitantes',
+    responsible: 'Construtora Arruda',
+    phases: [
+      { label: 'OBRA E CANTEIRO', items: [
+        { text: 'Instalar tapume com comunicação visual do Amazaki', type: 'A' },
+        { text: 'Garantir sinalização de segurança no perímetro da obra', type: 'A' },
+        { text: 'Definir cronograma de obras com marcos mensais', type: 'E' },
+        { text: 'Contratar empresa responsável pelo acompanhamento da obra', type: 'A' },
+      ]},
+      { label: 'SINALIZAÇÃO E IDENTIDADE FÍSICA', items: [
+        { text: 'Instalar totem externo com nome e identidade do Amazaki', type: 'A' },
+        { text: 'Definir sinalização interna das áreas comuns', type: 'E' },
+        { text: 'Definir numeração e identificação das salas/lojas', type: 'A' },
+        { text: 'Instalar placa de lançamento com informações de contato', type: 'A' },
+      ]},
+      { label: 'INFRAESTRUTURA DO CONDOMÍNIO', items: [
+        { text: 'Confirmar instalação de gerador de energia', type: 'A' },
+        { text: 'Confirmar instalação de elevadores (quantidade e capacidade)', type: 'A' },
+        { text: 'Definir infraestrutura de internet e cabeamento do mall', type: 'A' },
+        { text: 'Definir sistema de câmeras e controle de acesso', type: 'A' },
+        { text: 'Definir infraestrutura de estacionamento e vagas', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 8, num: '08', scope: 'operacional',
+    title: 'Segurança',
+    objective: 'Definir e implementar o modelo de segurança do Amazaki para a operação do mall',
+    responsible: 'Construtora Arruda + Administradora',
+    phases: [
+      { label: 'PLANEJAMENTO', items: [
+        { text: 'Definir modelo de segurança (armada, desarmada ou mista)', type: 'A' },
+        { text: 'Definir horário de funcionamento da segurança', type: 'A' },
+        { text: 'Mapear pontos críticos de segurança no projeto', type: 'A' },
+        { text: 'Verificar exigências legais para segurança armada em Manaus', type: 'A' },
+      ]},
+      { label: 'CONTRATAÇÃO E IMPLANTAÇÃO', items: [
+        { text: 'Contratar empresa de segurança homologada', type: 'A' },
+        { text: 'Definir número de seguranças por turno', type: 'A' },
+        { text: 'Instalar sistema de câmeras de vigilância (CFTV)', type: 'A' },
+        { text: 'Instalar catracas ou controle de acesso nas entradas', type: 'A' },
+        { text: 'Criar protocolo de ocorrências e emergências', type: 'E' },
+      ]},
+      { label: 'OPERAÇÃO', items: [
+        { text: 'Treinar equipe de segurança nos protocolos do mall', type: 'A' },
+        { text: 'Definir rondas e escalas de segurança', type: 'E' },
+        { text: 'Integrar sistema de segurança ao controle da administradora', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 9, num: '09', scope: 'operacional',
+    title: 'Administradora do Mall',
+    objective: 'Estruturar a administradora responsável pela gestão diária do Amazaki após a abertura',
+    responsible: 'Construtora Arruda',
+    phases: [
+      { label: 'ESTRUTURAÇÃO', items: [
+        { text: 'Definir se a administradora será interna (Arruda) ou terceirizada', type: 'A' },
+        { text: 'Criar ou formalizar o CNPJ da administradora (se necessário)', type: 'A' },
+        { text: 'Definir estrutura de equipe da administradora (cargos e funções)', type: 'A' },
+        { text: 'Elaborar regimento interno do condomínio comercial', type: 'E' },
+      ]},
+      { label: 'PROCESSOS OPERACIONAIS', items: [
+        { text: 'Definir processo de cobrança de aluguel e taxas condominiais', type: 'E' },
+        { text: 'Definir processo de gestão de inadimplência', type: 'E' },
+        { text: 'Definir processo de manutenção preventiva e corretiva', type: 'E' },
+        { text: 'Definir processo de gestão de locatários (entrada, saída, renovação)', type: 'E' },
+        { text: 'Implantar sistema de gestão do condomínio (software)', type: 'A' },
+      ]},
+      { label: 'COMUNICAÇÃO COM INVESTIDORES', items: [
+        { text: 'Definir frequência e formato de relatórios para investidores', type: 'A' },
+        { text: 'Criar modelo de extrato mensal de rendimentos', type: 'E' },
+        { text: 'Definir canal de comunicação oficial com investidores', type: 'A' },
+        { text: 'Criar procedimento de repasse de aluguéis aos investidores', type: 'E' },
+      ]},
+    ]
+  },
+  {
+    id: 10, num: '10', scope: 'operacional',
+    title: 'Locatários e Mix Comercial',
+    objective: 'Definir e prospectar o mix de lojas, restaurantes e serviços do Amazaki',
+    responsible: 'Construtora Arruda + Administradora',
+    phases: [
+      { label: 'PLANEJAMENTO DO MIX', items: [
+        { text: 'Definir categorias de negócios desejadas no mall (restaurantes, serviços, lojas)', type: 'A' },
+        { text: 'Definir âncoras comerciais prioritárias', type: 'A' },
+        { text: 'Mapear negócios locais com perfil para o Amazaki', type: 'E' },
+        { text: 'Definir critérios de seleção de locatários', type: 'E' },
+      ]},
+      { label: 'PROSPECÇÃO', items: [
+        { text: 'Prospectar âncoras comerciais com abordagem direta', type: 'A' },
+        { text: 'Criar material de apresentação do Amazaki para locatários', type: 'E' },
+        { text: 'Realizar reuniões de interesse com potenciais locatários', type: 'A' },
+        { text: 'Registrar negociações em andamento no CRM', type: 'A' },
+      ]},
+      { label: 'FECHAMENTO', items: [
+        { text: 'Assinar cartas de intenção com locatários confirmados', type: 'E' },
+        { text: 'Assinar contratos de locação definitivos', type: 'E' },
+        { text: 'Definir período de carência para início do pagamento de aluguel', type: 'A' },
+        { text: 'Comunicar ao investidor o locatário da sua unidade', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 11, num: '11', scope: 'compartilhado',
+    title: 'Abertura do Mall',
+    objective: 'Garantir que tudo está pronto para o funcionamento do Amazaki no dia da abertura',
+    responsible: 'Paleta + Construtora Arruda + Administradora',
+    phases: [
+      { label: 'ATÉ 30 DIAS ANTES DA ABERTURA', items: [
+        { text: 'Confirmar que todos os contratos de locação estão assinados', type: 'A' },
+        { text: 'Confirmar que a administradora está operacional', type: 'A' },
+        { text: 'Confirmar que a segurança armada está contratada e escalada', type: 'A' },
+        { text: 'Confirmar que a infraestrutura física está concluída', type: 'A' },
+        { text: 'Confirmar alvarás e licenças de funcionamento em mãos', type: 'A' },
+        { text: 'Planejar evento de inauguração com ação de marketing', type: 'A' },
+      ]},
+      { label: 'ATÉ 7 DIAS ANTES DA ABERTURA', items: [
+        { text: 'Confirmar comunicação visual do mall instalada (tapume, totem, sinalização)', type: 'A' },
+        { text: 'Realizar vistoria geral de infraestrutura', type: 'A' },
+        { text: 'Treinar equipe de segurança e administração no local', type: 'A' },
+        { text: 'Publicar campanha de abertura nas redes sociais', type: 'A' },
+        { text: 'Enviar comunicado oficial de abertura para investidores', type: 'E' },
+      ]},
+      { label: 'DIA DA ABERTURA', items: [
+        { text: 'Realizar evento de inauguração com cobertura de mídia', type: 'A' },
+        { text: 'Registrar abertura em fotos e vídeos para conteúdo', type: 'E' },
+        { text: 'Garantir presença da administradora no local', type: 'A' },
+        { text: 'Garantir presença da segurança operacional', type: 'A' },
+        { text: 'Publicar conteúdo ao vivo nas redes sociais', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 12, num: '12', scope: 'compartilhado',
+    title: 'Marcos e Aprovações',
+    objective: 'Registrar as aprovações necessárias de cada parte antes de avançar nas etapas do projeto',
+    responsible: 'Paleta + Construtora Arruda',
+    phases: [
+      { label: 'APROVAÇÕES DA PALETA → CONSTRUTORA', items: [
+        { text: 'Aprovação da Estrutura Estratégica do Empreendimento', type: 'A' },
+        { text: 'Aprovação da Narrativa Comercial do Projeto', type: 'A' },
+        { text: 'Aprovação da Identidade Visual do Amazaki', type: 'A' },
+        { text: 'Aprovação da Landing Page antes de publicar', type: 'A' },
+        { text: 'Aprovação dos Materiais Comerciais antes de distribuir', type: 'A' },
+        { text: 'Aprovação da Estrutura de Campanhas antes de ativar', type: 'A' },
+      ]},
+      { label: 'APROVAÇÕES DA CONSTRUTORA → PALETA', items: [
+        { text: 'Envio do briefing completo (plantas, preços, informações técnicas)', type: 'E' },
+        { text: 'Confirmação do orçamento de tráfego pago aprovado', type: 'A' },
+        { text: 'Confirmação de acesso às contas digitais (Meta Ads, domínio, CRM)', type: 'A' },
+        { text: 'Confirmação da data de lançamento oficial', type: 'A' },
+      ]},
+      { label: 'MARCOS GERAIS DO PROJETO', items: [
+        { text: 'Kickoff realizado e registrado', type: 'A' },
+        { text: 'Briefing recebido e validado pela Paleta', type: 'A' },
+        { text: 'Todos os entregáveis da ativação concluídos', type: 'A' },
+        { text: 'Landing page no ar e captando leads', type: 'A' },
+        { text: 'Primeira campanha de tráfego ativa', type: 'A' },
+        { text: 'Primeiro investidor captado', type: 'A' },
+        { text: 'Mall aberto e operacional', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 13, num: '13', scope: 'marketing',
+    title: 'Mídia e Divulgação',
+    objective: 'Teaser, outdoor, mídia física e canais de divulgação para captação de investidores e locatários',
+    responsible: 'Paleta Marketing',
+    phases: [
+      { label: 'TEASER E PRÉ-LANÇAMENTO', items: [
+        { text: 'Definir conceito e roteiro do teaser do Amazaki', type: 'A' },
+        { text: 'Produzir vídeo teaser do Amazaki (15 a 30 segundos)', type: 'E' },
+        { text: 'Publicar teaser nas redes sociais com contagem regressiva', type: 'A' },
+        { text: 'Ativar campanha de tráfego pago com o teaser como criativo', type: 'A' },
+      ]},
+      { label: 'OUTDOOR E MÍDIA FÍSICA', items: [
+        { text: 'Mapear pontos de outdoor estratégicos no Aleixo e entorno', type: 'A' },
+        { text: 'Produzir arte para outdoor no padrão da identidade visual do Amazaki', type: 'E' },
+        { text: 'Contratar espaços de outdoor (negociar com fornecedores locais)', type: 'A' },
+        { text: 'Confirmar instalação e período de veiculação do outdoor', type: 'A' },
+      ]},
+      { label: 'CANAIS ADICIONAIS DE DIVULGAÇÃO', items: [
+        { text: 'Mapear influenciadores locais de Manaus com perfil de investimento/negócios', type: 'A' },
+        { text: 'Prospectar parceiros para divulgação por indicação (corretores, escritórios, advogados)', type: 'A' },
+        { text: 'Criar programa de indicação com comissão para parceiros externos', type: 'E' },
+        { text: 'Avaliar canais adicionais: e-mail marketing, LinkedIn, grupos de WhatsApp de investidores', type: 'A' },
+        { text: 'Registrar cada canal ativado e monitorar origem dos leads captados', type: 'A' },
+      ]},
+    ]
+  },
+  {
+    id: 14, num: '14', scope: 'operacional',
+    title: 'Decoração Temática do Mall',
+    objective: 'Definir e implementar a identidade visual temática japonesa nos espaços físicos do Amazaki',
+    responsible: 'Construtora Arruda',
+    phases: [
+      { label: 'CONCEITO E PLANEJAMENTO', items: [
+        { text: 'Definir o nível de imersão temática japonesa (superficial, moderado ou total)', type: 'A' },
+        { text: 'Mapear referências visuais de decoração japonesa para apresentar ao Robério', type: 'E' },
+        { text: 'Definir orçamento disponível para decoração temática', type: 'A' },
+        { text: 'Contratar arquiteto ou designer de interiores especializado em temática japonesa', type: 'A' },
+      ]},
+      { label: 'ÁREAS COMUNS E FACHADA', items: [
+        { text: 'Definir decoração temática da fachada e entrada principal do mall', type: 'A' },
+        { text: 'Definir decoração dos corredores e áreas de circulação (plantas, painéis, iluminação)', type: 'A' },
+        { text: 'Planejar ponto focal temático (jardim zen, mural, torii, elemento de água)', type: 'A' },
+        { text: 'Definir projeto de iluminação temática para as áreas comuns', type: 'E' },
+      ]},
+      { label: 'EXECUÇÃO E APROVAÇÃO', items: [
+        { text: 'Produzir projeto executivo de decoração para aprovação do Robério', type: 'E' },
+        { text: 'Contratar fornecedores de decoração e mobiliário temático', type: 'A' },
+        { text: 'Executar instalação da decoração antes da abertura do mall', type: 'A' },
+        { text: 'Fotografar a decoração finalizada para uso em materiais de marketing', type: 'E' },
+      ]},
+    ]
+  },
+];
+
+/* ── STATE MANAGEMENT ── */
+/* ── FIREBASE CONFIG ── */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyATiV402AUWk9WCZzSXhVX_xSURkmCDZ9c",
+  authDomain:        "amazaki-checklist.firebaseapp.com",
+  databaseURL:       "https://amazaki-checklist-default-rtdb.firebaseio.com",
+  projectId:         "amazaki-checklist",
+  storageBucket:     "amazaki-checklist.firebasestorage.app",
+  messagingSenderId: "1022892311948",
+  appId:             "1:1022892311948:web:2b8f035cb2b76f2e2842a9",
+};
+const DB_PATH = "checklist/items";
+
+/* ── STATE (Firebase Realtime DB + localStorage fallback) ── */
+const State = (() => {
+  let _data   = {};
+  let _db     = null;
+  let _dbRef  = null;
+  let _online = false;
+  let _onChangeCallback = null;
+
+  /* ── Bootstrap Firebase ── */
+  function initFirebase() {
+    return new Promise((resolve) => {
+      try {
+        const script = document.createElement('script');
+        script.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+        script.onload = () => {
+          const script2 = document.createElement('script');
+          script2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+          script2.onload = () => {
+            try {
+              if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+              _db     = firebase.database();
+              _dbRef  = _db.ref(DB_PATH);
+              _online = true;
+
+              // Listen for remote changes → update local and re-render
+              _dbRef.on('value', (snapshot) => {
+                const remote = snapshot.val() || {};
+                _data = remote;
+                _syncLocalStorage();
+                if (_onChangeCallback) _onChangeCallback();
+              });
+
+              resolve(true);
+            } catch(e) {
+              console.warn('Firebase init error:', e);
+              resolve(false);
+            }
+          };
+          script2.onerror = () => resolve(false);
+          document.head.appendChild(script2);
+        };
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      } catch(e) {
+        resolve(false);
+      }
+    });
+  }
+
+  /* ── localStorage fallback ── */
+  function _loadLocalStorage() {
+    try { _data = JSON.parse(localStorage.getItem('amazaki_v2')) || {}; }
+    catch { _data = {}; }
+  }
+
+  function _syncLocalStorage() {
+    try { localStorage.setItem('amazaki_v2', JSON.stringify(_data)); }
+    catch(e) {}
+  }
+
+  /* ── Key helpers ── */
+  function key(clId, phaseIdx, itemIdx) {
+    return `c${clId}_p${phaseIdx}_i${itemIdx}`;
+  }
+
+  function isChecked(clId, phaseIdx, itemIdx) {
+    return !!_data[key(clId, phaseIdx, itemIdx)];
+  }
+
+  /* ── Toggle — writes to Firebase if online, localStorage otherwise ── */
+  function toggle(clId, phaseIdx, itemIdx) {
+    const k       = key(clId, phaseIdx, itemIdx);
+    const newVal  = !_data[k];
+    _data[k]      = newVal;
+    _syncLocalStorage();
+
+    if (_online && _dbRef) {
+      _dbRef.child(k).set(newVal || null); // null removes false values to keep DB clean
+    }
+
+    return newVal;
+  }
+
+  /* ── Progress helpers ── */
+  function getChecklistProgress(cl) {
+    let total = 0, done = 0;
+    cl.phases.forEach((ph, pi) =>
+      ph.items.forEach((_, ii) => { total++; if (isChecked(cl.id, pi, ii)) done++; })
+    );
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }
+
+  function getPhaseProgress(clId, phaseIdx, items) {
+    const total = items.length;
+    const done  = items.filter((_, ii) => isChecked(clId, phaseIdx, ii)).length;
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }
+
+  function getScopeProgress(scope) {
+    let total = 0, done = 0;
+    CHECKLISTS.filter(c => c.scope === scope).forEach(cl => {
+      const p = getChecklistProgress(cl); total += p.total; done += p.done;
+    });
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }
+
+  function getGlobalProgress() {
+    let total = 0, done = 0;
+    CHECKLISTS.forEach(cl => {
+      const p = getChecklistProgress(cl); total += p.total; done += p.done;
+    });
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }
+
+  function onRemoteChange(cb) { _onChangeCallback = cb; }
+  function isOnline() { return _online; }
+
+  function reset() {
+    _data = {};
+    _syncLocalStorage();
+    if (_online && _dbRef) _dbRef.set(null);
+  }
+
+  /* ── load: primeiro localStorage (instantâneo), depois Firebase conecta ── */
+  async function load() {
+    _loadLocalStorage(); // dados locais enquanto Firebase carrega
+    await initFirebase();
+  }
+
+  return {
+    load, isChecked, toggle, onRemoteChange, isOnline,
+    getChecklistProgress, getPhaseProgress, getScopeProgress, getGlobalProgress, reset
+  };
+})();
+
+/* ── UI HELPERS ── */
+
+const scopeColor = {
+  marketing:     'var(--c-red)',
+  operacional:   'var(--c-gold)',
+  compartilhado: 'var(--c-blue)',
+};
+
+const scopeLabel = {
+  marketing:     'Marketing / Paleta',
+  operacional:   'Operacional / Construtora',
+  compartilhado: 'Compartilhado',
+};
+
+/* ── TOAST ── */
+const Toast = (() => {
+  let timer = null;
+  const el    = () => document.getElementById('toast');
+  const msgEl = () => document.getElementById('toastMsg');
+
+  function show(text, icon = '✓') {
+    const t = el(); const m = msgEl();
+    if (!t || !m) return;
+    m.textContent = text.length > 55 ? text.slice(0, 55) + '…' : text;
+    document.getElementById('toastIcon').textContent = icon;
+    t.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  return { show };
+})();
+
+/* ── CONFETTI ── */
+function spawnConfetti(x, y) {
+  const colors = ['#e63946','#c9a84c','#4a90d9','#2ecc71','#ff6b75'];
+  for (let i = 0; i < 8; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'confetti-dot';
+    dot.style.cssText = `
+      left: ${x + (Math.random() - 0.5) * 60}px;
+      top:  ${y - 10}px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-delay: ${Math.random() * 0.15}s;
+      animation-duration: ${0.6 + Math.random() * 0.4}s;
+    `;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 1200);
+  }
+}
+
+/* ── PROGRESS UPDATES ── */
+function updateGlobalProgress() {
+  const p = State.getGlobalProgress();
+  const bar = document.getElementById('globalFill');
+  const pct = document.getElementById('globalPct');
+  if (bar) bar.style.width = p.pct + '%';
+  if (pct) pct.textContent  = p.pct + '%';
+}
+
+function updateScopeProgress() {
+  ['marketing', 'operacional', 'compartilhado'].forEach(scope => {
+    const p   = State.getScopeProgress(scope);
+    const bar = document.getElementById(`scope-fill-${scope}`);
+    const pct = document.getElementById(`scope-pct-${scope}`);
+    const cnt = document.getElementById(`scope-cnt-${scope}`);
+    if (bar) bar.style.width = p.pct + '%';
+    if (pct) pct.textContent  = p.pct + '%';
+    if (cnt) cnt.textContent  = `${p.done}/${p.total}`;
+  });
+}
+
+function updateCardProgress(clId) {
+  const cl = CHECKLISTS.find(c => c.id === clId);
+  if (!cl) return;
+  const p = State.getChecklistProgress(cl);
+
+  const fill = document.getElementById(`card-fill-${clId}`);
+  const pct  = document.getElementById(`card-pct-${clId}`);
+  const cnt  = document.getElementById(`card-cnt-${clId}`);
+  const card = document.getElementById(`cl-card-${clId}`);
+
+  if (fill) fill.style.width = p.pct + '%';
+  if (pct)  pct.textContent  = p.pct + '%';
+  if (cnt)  cnt.textContent  = `${p.done}/${p.total} itens`;
+  if (card) card.classList.toggle('all-done', p.pct === 100);
+}
+
+function updateDetailProgress(clId) {
+  const cl = CHECKLISTS.find(c => c.id === clId);
+  if (!cl) return;
+  const p = State.getChecklistProgress(cl);
+
+  const bar   = document.getElementById(`detail-fill-${clId}`);
+  const label = document.getElementById(`detail-pct-${clId}`);
+  const banner = document.getElementById(`done-banner-${clId}`);
+
+  if (bar)   bar.style.width = p.pct + '%';
+  if (label) label.textContent = `${p.done}/${p.total} · ${p.pct}%`;
+  if (banner) banner.classList.toggle('show', p.pct === 100);
+}
+
+function updatePhaseProgress(clId, phaseIdx) {
+  const cl = CHECKLISTS.find(c => c.id === clId);
+  if (!cl) return;
+  const ph = cl.phases[phaseIdx];
+  const p  = State.getPhaseProgress(clId, phaseIdx, ph.items);
+
+  const bar   = document.getElementById(`phase-fill-${clId}-${phaseIdx}`);
+  const label = document.getElementById(`phase-lbl-${clId}-${phaseIdx}`);
+
+  if (bar)   bar.style.width = p.pct + '%';
+  if (label) label.textContent = `${p.done}/${p.total}`;
+}
+
+/* ── RENDER OVERVIEW ── */
+function renderOverview() {
+  // stats
+  const totalItems = CHECKLISTS.reduce((s, c) => s + c.phases.reduce((ss, p) => ss + p.items.length, 0), 0);
+  document.getElementById('stat-checklists').textContent = '14';
+  document.getElementById('stat-items').textContent      = totalItems;
+
+  // scope cards
+  ['marketing', 'operacional', 'compartilhado'].forEach(scope => {
+    const p   = State.getScopeProgress(scope);
+    const bar = document.getElementById(`scope-fill-${scope}`);
+    const pct = document.getElementById(`scope-pct-${scope}`);
+    const cnt = document.getElementById(`scope-cnt-${scope}`);
+    if (bar) bar.style.width = p.pct + '%';
+    if (pct) pct.textContent  = p.pct + '%';
+    if (cnt) cnt.textContent  = `${p.done}/${p.total}`;
+  });
+
+  // grid
+  const grid = document.getElementById('checklistGrid');
+  grid.innerHTML = '';
+
+  CHECKLISTS.forEach((cl, idx) => {
+    const p = State.getChecklistProgress(cl);
+    const card = document.createElement('div');
+    card.className = `cl-card ${cl.scope} anim-fade-up stagger-${Math.min(idx + 1, 14)}`;
+    card.id = `cl-card-${cl.id}`;
+    if (p.pct === 100) card.classList.add('all-done');
+
+    card.innerHTML = `
+      <div class="cl-done-badge">✓ Concluído</div>
+      <div class="cl-num">
+        <span class="cl-num-dot ${cl.scope}"></span>
+        CHECKLIST ${cl.num}
+      </div>
+      <div class="cl-title">${cl.title}</div>
+      <div class="cl-footer">
+        <span class="cl-count" id="card-cnt-${cl.id}">${p.done}/${p.total} itens</span>
+        <span class="cl-pct"   id="card-pct-${cl.id}">${p.pct}%</span>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="card-fill-${cl.id}" style="width:${p.pct}%"></div>
+      </div>
+      <span class="cl-arrow">→</span>
+    `;
+    card.addEventListener('click', () => App.openDetail(cl.id));
+    grid.appendChild(card);
+  });
+
+  updateGlobalProgress();
+}
+
+/* ── RENDER DETAIL ── */
+function renderDetail(clId) {
+  const cl = CHECKLISTS.find(c => c.id === clId);
+  if (!cl) return;
+
+  const container = document.getElementById('detail-container');
+  if (document.getElementById(`detail-page-${clId}`)) return; // already built
+
+  const p = State.getChecklistProgress(cl);
+  const totalItems = cl.phases.reduce((s, ph) => s + ph.items.length, 0);
+
+  const page = document.createElement('div');
+  page.id = `detail-page-${clId}`;
+  page.className = 'page';
+
+  const dot = `background:${scopeColor[cl.scope]}`;
+
+  page.innerHTML = `
+    <div class="detail-sticky">
+      <div class="detail-sticky-inner">
+        <button class="back-btn" id="back-btn-${clId}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Visão geral
+        </button>
+        <div class="detail-head-row">
+          <div>
+            <div class="detail-eyebrow">CHECKLIST ${cl.num} · ${totalItems} ITENS</div>
+            <div class="detail-title">${cl.title}</div>
+            <div class="detail-badges">
+              <span class="badge"><span class="badge-dot" style="${dot}"></span>${scopeLabel[cl.scope]}</span>
+              <span class="badge">${cl.responsible}</span>
+            </div>
+          </div>
+          <div class="detail-progress-wrap">
+            <div class="detail-progress-label">
+              <span>Progresso</span>
+              <span id="detail-pct-${cl.id}">${p.done}/${p.total} · ${p.pct}%</span>
+            </div>
+            <div class="detail-progress-track">
+              <div class="detail-progress-fill ${cl.scope}" id="detail-fill-${cl.id}" style="width:${p.pct}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-content">
+      <div class="done-banner ${p.pct === 100 ? 'show' : ''}" id="done-banner-${cl.id}">
+        <div class="done-banner-icon">🎉</div>
+        <h3>Checklist concluído!</h3>
+        <p>Todos os ${totalItems} itens foram completados.</p>
+      </div>
+      <div id="detail-phases-${cl.id}"></div>
+    </div>
+  `;
+
+  container.appendChild(page);
+
+  // back button
+  page.querySelector(`#back-btn-${clId}`).addEventListener('click', () => App.closeDetail());
+
+  // render phases
+  renderPhases(cl);
+}
+
+function renderPhases(cl) {
+  const container = document.getElementById(`detail-phases-${cl.id}`);
+  if (!container) return;
+  container.innerHTML = '';
+
+  cl.phases.forEach((phase, phaseIdx) => {
+    const phP = State.getPhaseProgress(cl.id, phaseIdx, phase.items);
+    const dot = `background:${scopeColor[cl.scope]}`;
+
+    const section = document.createElement('div');
+    section.className = 'phase-section';
+
+    section.innerHTML = `
+      <div class="phase-header">
+        <span class="phase-dot" style="${dot}"></span>
+        <span class="phase-name">${phase.label}</span>
+        <div class="phase-mini-progress">
+          <div class="phase-mini-track">
+            <div class="phase-mini-fill ${cl.scope}" id="phase-fill-${cl.id}-${phaseIdx}" style="width:${phP.pct}%"></div>
+          </div>
+          <span class="phase-mini-label" id="phase-lbl-${cl.id}-${phaseIdx}">${phP.done}/${phP.total}</span>
+        </div>
+      </div>
+    `;
+
+    // items
+    phase.items.forEach((item, itemIdx) => {
+      const checked = State.isChecked(cl.id, phaseIdx, itemIdx);
+      const delay   = itemIdx * 30;
+
+      const row = document.createElement('div');
+      row.className = `item-row${checked ? ' completed' : ''} item-anim`;
+      row.id = `item-${cl.id}-${phaseIdx}-${itemIdx}`;
+      row.style.animationDelay = delay + 'ms';
+      row.setAttribute('role', 'checkbox');
+      row.setAttribute('aria-checked', String(checked));
+      row.setAttribute('tabindex', '0');
+
+      row.innerHTML = `
+        <div class="item-cb">
+          <span class="cb-check">✓</span>
+          <span class="cb-empty"></span>
+        </div>
+        <div class="item-text">${item.text}</div>
+        <span class="item-type ${item.type}">${item.type}</span>
+      `;
+
+      const handleToggle = (e) => {
+        const nowChecked = State.toggle(cl.id, phaseIdx, itemIdx);
+        row.classList.toggle('completed', nowChecked);
+        row.setAttribute('aria-checked', String(nowChecked));
+
+        if (nowChecked) {
+          const rect = row.getBoundingClientRect();
+          spawnConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          Toast.show(item.text);
+        }
+
+        updatePhaseProgress(cl.id, phaseIdx);
+        updateDetailProgress(cl.id);
+        updateCardProgress(cl.id);
+        updateScopeProgress();
+        updateGlobalProgress();
+      };
+
+      row.addEventListener('click', handleToggle);
+      row.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleToggle(e); }});
+
+      section.appendChild(row);
+    });
+
+    container.appendChild(section);
+  });
+}
+
+/* ── APP CONTROLLER ── */
+const App = (() => {
+  let currentDetailId = null;
+
+  function buildShell() {
+    const totalItems = CHECKLISTS.reduce((s, c) =>
+      s + c.phases.reduce((ss, p) => ss + p.items.length, 0), 0);
+
+    document.getElementById('app').innerHTML = `
+      <!-- Background blobs -->
+      <div class="bg-blob bg-blob-1"></div>
+      <div class="bg-blob bg-blob-2"></div>
+      <div class="bg-blob bg-blob-3"></div>
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-inner">
+          <div class="logo">
+            <div class="logo-mark">A</div>
+            <div class="logo-text">
+              <span class="logo-name">Paleta Marketing</span>
+              <span class="logo-sub">Contrato Nº 28.2026</span>
+            </div>
+          </div>
+          <div class="header-center">
+            <div class="project-name">Centro Comercial Amazaki</div>
+            <div class="project-sub">Ativação Estratégica · Aleixo, Manaus</div>
+          </div>
+          <div class="global-pill">
+            <span class="global-pill-label">Progresso geral</span>
+            <div class="global-pill-track">
+              <div class="global-pill-fill" id="globalFill"></div>
+            </div>
+            <span class="global-pill-pct" id="globalPct">0%</span>
+          </div>
+          <span id="sync-indicator" style="font-size:11px;color:var(--c-muted);white-space:nowrap;margin-left:4px">○ conectando</span>
+        </div>
+      </header>
+
+      <!-- Overview page -->
+      <div id="overview-page" class="page active">
+        <div class="overview">
+          <!-- Hero -->
+          <div class="hero anim-fade-up">
+            <div class="hero-eyebrow">
+              <span class="hero-eyebrow-dot"></span>
+              Paleta Marketing · Ativação Estratégica
+            </div>
+            <h1>14 Checklists da<br><em>Ativação</em> Amazaki</h1>
+            <p>Do briefing técnico à abertura do mall — cada atividade mapeada, cada responsabilidade definida, cada entrega rastreada.</p>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span class="hero-stat-num" id="stat-checklists">14</span>
+                <span class="hero-stat-label">checklists</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-num" id="stat-items">${totalItems}</span>
+                <span class="hero-stat-label">itens no total</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-num">3</span>
+                <span class="hero-stat-label">escopos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scope strip -->
+          <div class="scope-strip">
+            <div class="scope-card anim-fade-up stagger-1">
+              <div class="scope-card-top">
+                <div class="scope-icon marketing">🎯</div>
+                <div>
+                  <div class="scope-label">Escopo</div>
+                  <div class="scope-name">Marketing · Paleta</div>
+                  <div class="scope-label" style="margin-top:2px">Checklists 01–05, 13</div>
+                </div>
+              </div>
+              <div class="scope-track"><div class="scope-fill marketing" id="scope-fill-marketing"></div></div>
+              <div class="scope-meta">
+                <span id="scope-cnt-marketing">0/0</span>
+                <span class="scope-meta-pct" id="scope-pct-marketing">0%</span>
+              </div>
+            </div>
+            <div class="scope-card anim-fade-up stagger-2">
+              <div class="scope-card-top">
+                <div class="scope-icon operacional">🏗️</div>
+                <div>
+                  <div class="scope-label">Escopo</div>
+                  <div class="scope-name">Operacional · Construtora</div>
+                  <div class="scope-label" style="margin-top:2px">Checklists 06–10, 14</div>
+                </div>
+              </div>
+              <div class="scope-track"><div class="scope-fill operacional" id="scope-fill-operacional"></div></div>
+              <div class="scope-meta">
+                <span id="scope-cnt-operacional">0/0</span>
+                <span class="scope-meta-pct" id="scope-pct-operacional">0%</span>
+              </div>
+            </div>
+            <div class="scope-card anim-fade-up stagger-3">
+              <div class="scope-card-top">
+                <div class="scope-icon compartilhado">🤝</div>
+                <div>
+                  <div class="scope-label">Escopo</div>
+                  <div class="scope-name">Compartilhado · Ambos</div>
+                  <div class="scope-label" style="margin-top:2px">Checklists 11–12</div>
+                </div>
+              </div>
+              <div class="scope-track"><div class="scope-fill compartilhado" id="scope-fill-compartilhado"></div></div>
+              <div class="scope-meta">
+                <span id="scope-cnt-compartilhado">0/0</span>
+                <span class="scope-meta-pct" id="scope-pct-compartilhado">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="grid-label">Todos os checklists</div>
+          <div class="checklist-grid" id="checklistGrid"></div>
+
+          <!-- Legend -->
+          <div class="legend anim-fade-up">
+            <div class="legend-item">
+              <span class="type-badge A">A</span> Atividade — algo a fazer
+            </div>
+            <div class="legend-item">
+              <span class="type-badge E">E</span> Entrega — algo a produzir
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--c-red)"></span> Marketing / Paleta
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--c-gold)"></span> Operacional / Construtora
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--c-blue)"></span> Compartilhado
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail pages container -->
+      <div id="detail-container"></div>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✓</span>
+        <span class="toast-text" id="toastMsg"></span>
+      </div>
+    `;
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  function openDetail(clId) {
+    currentDetailId = clId;
+    renderDetail(clId); // build if not already
+    showPage(`detail-page-${clId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+  }
+
+  function closeDetail() {
+    currentDetailId = null;
+    showPage('overview-page');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // update overview cards
+    CHECKLISTS.forEach(cl => updateCardProgress(cl.id));
+    updateScopeProgress();
+    updateGlobalProgress();
+
+
+  }
+
+
+
+  async function init() {
+    buildShell();
+    renderOverview();
+    updateGlobalProgress();
+
+    // Show loading state in header
+    const pill = document.getElementById('globalPct');
+    if (pill) pill.textContent = '…';
+
+    // Load state (localStorage instant + Firebase async)
+    await State.load();
+
+    // Show online/offline indicator
+    const indicator = document.getElementById('sync-indicator');
+    if (indicator) {
+      indicator.textContent = State.isOnline() ? '● sincronizado' : '○ offline';
+      indicator.style.color = State.isOnline() ? 'var(--c-green)' : 'var(--c-muted)';
+    }
+
+    // When Firebase pushes remote changes → re-render everything
+    State.onRemoteChange(() => {
+      CHECKLISTS.forEach(cl => {
+        updateCardProgress(cl.id);
+        // if detail page is open, update items visually
+        cl.phases.forEach((ph, pi) => {
+          ph.items.forEach((item, ii) => {
+            const row = document.getElementById(`item-${cl.id}-${pi}-${ii}`);
+            if (row) {
+              const checked = State.isChecked(cl.id, pi, ii);
+              row.classList.toggle('completed', checked);
+              row.setAttribute('aria-checked', String(checked));
+            }
+          });
+          updatePhaseProgress(cl.id, pi);
+        });
+        updateDetailProgress(cl.id);
+      });
+      updateScopeProgress();
+      updateGlobalProgress();
+    });
+
+    // Final render with Firebase data
+    CHECKLISTS.forEach(cl => updateCardProgress(cl.id));
+    updateScopeProgress();
+    updateGlobalProgress();
+  }
+
+  return { init, openDetail, closeDetail };
+})();
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', App.init);
+
+</script>
 </body>
 </html>
