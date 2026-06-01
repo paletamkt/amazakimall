@@ -894,10 +894,173 @@ body::after {
   .overview, .detail-content { padding: 16px; }
 }
 
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position: fixed; inset: 0; z-index: 9000;
+  background: var(--c-bg);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--sp-4);
+}
+#login-screen.hidden { display: none; }
+
+.login-card {
+  background: var(--c-bg2);
+  border: 1px solid var(--c-border2);
+  border-radius: var(--r-xl);
+  padding: 48px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  animation: scaleIn 0.3s var(--ease-out);
+}
+.login-logo {
+  display: flex; align-items: center; gap: var(--sp-3);
+  margin-bottom: var(--sp-8);
+}
+.login-logo-mark {
+  width: 44px; height: 44px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--c-red), #8a0f1a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-display); font-size: 20px; color: #fff;
+  box-shadow: var(--shadow-glow-red);
+}
+.login-logo-text { display: flex; flex-direction: column; line-height: 1.3; }
+.login-logo-name { font-size: 13px; font-weight: 600; color: var(--c-white); letter-spacing: 0.06em; text-transform: uppercase; }
+.login-logo-sub  { font-size: 11px; color: var(--c-muted); }
+
+.login-title { font-family: var(--f-display); font-size: 26px; color: var(--c-white); margin-bottom: var(--sp-2); }
+.login-sub   { font-size: 13px; color: var(--c-muted); margin-bottom: var(--sp-8); line-height: 1.5; }
+
+.login-field { margin-bottom: var(--sp-4); }
+.login-label { display: block; font-size: 12px; color: var(--c-muted2); margin-bottom: var(--sp-2); font-weight: 500; letter-spacing: 0.04em; }
+.login-input {
+  width: 100%; background: var(--c-bg4);
+  border: 1px solid var(--c-border2); border-radius: var(--r-md);
+  padding: 12px 14px; font-size: 14px; color: var(--c-white);
+  font-family: var(--f-body);
+  transition: border-color var(--t-mid), box-shadow var(--t-mid);
+  outline: none;
+}
+.login-input:focus {
+  border-color: var(--c-red);
+  box-shadow: 0 0 0 3px var(--c-red-dim);
+}
+.login-input::placeholder { color: var(--c-muted); }
+
+.login-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--c-red), #c02030);
+  border-radius: var(--r-md); color: #fff;
+  font-size: 14px; font-weight: 600;
+  font-family: var(--f-body);
+  margin-top: var(--sp-2);
+  transition: opacity var(--t-fast), transform var(--t-fast);
+  box-shadow: var(--shadow-glow-red);
+  cursor: pointer; border: none;
+}
+.login-btn:hover   { opacity: 0.9; transform: translateY(-1px); }
+.login-btn:active  { transform: translateY(0); }
+.login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.login-error {
+  background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3);
+  border-radius: var(--r-sm); padding: var(--sp-3) var(--sp-4);
+  font-size: 13px; color: var(--c-red);
+  margin-top: var(--sp-4); display: none;
+}
+.login-error.show { display: block; animation: fadeIn 0.2s ease; }
+
+/* User chip in header */
+.user-chip {
+  display: flex; align-items: center; gap: var(--sp-2);
+  background: var(--c-bg3); border: 1px solid var(--c-border2);
+  border-radius: var(--r-pill); padding: 5px 10px 5px 6px;
+  font-size: 12px; color: var(--c-white); cursor: pointer;
+  transition: border-color var(--t-fast);
+  flex-shrink: 0;
+}
+.user-chip:hover { border-color: var(--c-border3); }
+.user-chip-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-green); flex-shrink: 0;
+  box-shadow: 0 0 6px var(--c-green);
+}
+.user-chip-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Item meta line */
+.item-meta {
+  font-size: 11px; color: var(--c-muted);
+  margin-top: 4px; line-height: 1.4;
+  font-family: var(--f-mono);
+  display: none;
+}
+.item-row.completed .item-meta { display: block; }
+
+/* Logout confirm */
+.logout-overlay {
+  position: fixed; inset: 0; z-index: 8000;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.logout-modal {
+  background: var(--c-bg2); border: 1px solid var(--c-border2);
+  border-radius: var(--r-lg); padding: var(--sp-8);
+  max-width: 340px; width: 90%; text-align: center;
+  animation: scaleIn 0.2s var(--ease-out);
+}
+.logout-modal h3 { font-family: var(--f-display); font-size: 20px; color: var(--c-white); margin-bottom: var(--sp-2); }
+.logout-modal p  { font-size: 13px; color: var(--c-muted); margin-bottom: var(--sp-6); }
+.logout-btns { display: flex; gap: var(--sp-3); }
+.btn-cancel {
+  flex: 1; padding: 10px; border-radius: var(--r-md);
+  background: var(--c-bg4); color: var(--c-muted2);
+  font-size: 13px; font-family: var(--f-body);
+  border: 1px solid var(--c-border2); cursor: pointer;
+  transition: background var(--t-fast);
+}
+.btn-cancel:hover { background: var(--c-bg5); }
+.btn-logout {
+  flex: 1; padding: 10px; border-radius: var(--r-md);
+  background: var(--c-red-dim); color: var(--c-red);
+  font-size: 13px; font-weight: 600; font-family: var(--f-body);
+  border: 1px solid rgba(230,57,70,0.3); cursor: pointer;
+  transition: background var(--t-fast);
+}
+.btn-logout:hover { background: rgba(230,57,70,0.2); }
+
+@media (max-width: 480px) {
+  .login-card { padding: 32px 24px; }
+  .login-title { font-size: 22px; }
+}
 </style>
 </head>
 <body>
-  <div id="app"></div>
+  <!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">A</div>
+      <div class="login-logo-text">
+        <span class="login-logo-name">Paleta Marketing</span>
+        <span class="login-logo-sub">Contrato Nº 28.2026</span>
+      </div>
+    </div>
+    <div class="login-title">Bem-vindo ao Amazaki</div>
+    <div class="login-sub">Sistema de acompanhamento da Ativação Estratégica. Faça login para continuar.</div>
+    <div class="login-field">
+      <label class="login-label" for="login-email">E-MAIL</label>
+      <input class="login-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email" />
+    </div>
+    <div class="login-field">
+      <label class="login-label" for="login-pass">SENHA</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" id="login-btn">Entrar</button>
+    <div class="login-error" id="login-error">E-mail ou senha incorretos. Tente novamente.</div>
+  </div>
+</div>
+
+<div id="app"></div>
 
   <!-- Scripts -->
   
@@ -1316,92 +1479,169 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "1022892311948",
   appId:             "1:1022892311948:web:2b8f035cb2b76f2e2842a9",
 };
-const DB_PATH = "checklist/items";
 
-/* ── STATE (Firebase Realtime DB + localStorage fallback) ── */
-const State = (() => {
-  let _data   = {};
-  let _db     = null;
-  let _dbRef  = null;
-  let _online = false;
-  let _onChangeCallback = null;
+const DB_PATH   = "checklist/items";
+const USER_DISPLAY = {
+  "luiz@paletamarketing.com.br":       "Luiz · Paleta",
+  "roberio@construtoraarruda.com.br":  "Robério · Arruda",
+  "eng.matheusmarruda@gmail.com":      "Matheus · Arruda",
+};
 
-  /* ── Bootstrap Firebase ── */
-  function initFirebase() {
+/* ── AUTH MODULE ── */
+const Auth = (() => {
+  let _user     = null;
+  let _auth     = null;
+  let _onLogin  = null;
+  let _onLogout = null;
+
+  async function init() {
     return new Promise((resolve) => {
-      try {
-        const script = document.createElement('script');
-        script.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-        script.onload = () => {
-          const script2 = document.createElement('script');
-          script2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-          script2.onload = () => {
-            try {
-              if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-              _db     = firebase.database();
-              _dbRef  = _db.ref(DB_PATH);
-              _online = true;
-
-              // Listen for remote changes → update local and re-render
-              _dbRef.on('value', (snapshot) => {
-                const remote = snapshot.val() || {};
-                _data = remote;
-                _syncLocalStorage();
-                if (_onChangeCallback) _onChangeCallback();
-              });
-
-              resolve(true);
-            } catch(e) {
-              console.warn('Firebase init error:', e);
-              resolve(false);
-            }
-          };
-          script2.onerror = () => resolve(false);
-          document.head.appendChild(script2);
-        };
-        script.onerror = () => resolve(false);
-        document.head.appendChild(script);
-      } catch(e) {
-        resolve(false);
-      }
+      _auth = firebase.auth();
+      // Persist session across page reloads
+      _auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+      _auth.onAuthStateChanged((user) => {
+        _user = user;
+        resolve(user);
+      });
     });
   }
 
-  /* ── localStorage fallback ── */
+  async function login(email, password) {
+    const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+    _user = cred.user;
+    return _user;
+  }
+
+  async function logout() {
+    await firebase.auth().signOut();
+    _user = null;
+    if (_onLogout) _onLogout();
+  }
+
+  function currentUser()        { return _user; }
+  function displayName()        { return _user ? (USER_DISPLAY[_user.email] || _user.email) : null; }
+  function email()              { return _user ? _user.email : null; }
+  function isLoggedIn()         { return !!_user; }
+  function onLogout(cb)         { _onLogout = cb; }
+
+  return { init, login, logout, currentUser, displayName, email, isLoggedIn, onLogout };
+})();
+
+/* ── STATE MODULE ── */
+const State = (() => {
+  let _data             = {};
+  let _db               = null;
+  let _dbRef            = null;
+  let _online           = false;
+  let _onChangeCallback = null;
+  let _cachedIP         = null;
+
+  /* ── Load Firebase SDKs ── */
+  function _loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  async function initFirebase() {
+    try {
+      await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+      await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+      await _loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js');
+
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+
+      _db    = firebase.database();
+      _dbRef = _db.ref(DB_PATH);
+      _online = true;
+
+      // Listen for remote changes
+      _dbRef.on('value', (snapshot) => {
+        _data = snapshot.val() || {};
+        _syncLocalStorage();
+        if (_onChangeCallback) _onChangeCallback();
+      });
+
+      return true;
+    } catch(e) {
+      console.warn('Firebase init error:', e);
+      return false;
+    }
+  }
+
+  /* ── IP ── */
+  async function _getIP() {
+    if (_cachedIP) return _cachedIP;
+    try {
+      const r = await fetch('https://api.ipify.org?format=json');
+      const j = await r.json();
+      _cachedIP = j.ip;
+    } catch { _cachedIP = 'desconhecido'; }
+    return _cachedIP;
+  }
+
+  /* ── Timestamp ── */
+  function _timestamp() {
+    return new Date().toLocaleString('pt-BR', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+  }
+
+  /* ── localStorage ── */
   function _loadLocalStorage() {
     try { _data = JSON.parse(localStorage.getItem('amazaki_v2')) || {}; }
     catch { _data = {}; }
   }
-
   function _syncLocalStorage() {
     try { localStorage.setItem('amazaki_v2', JSON.stringify(_data)); }
     catch(e) {}
   }
 
-  /* ── Key helpers ── */
-  function key(clId, phaseIdx, itemIdx) {
-    return `c${clId}_p${phaseIdx}_i${itemIdx}`;
-  }
+  /* ── Key ── */
+  function key(clId, phaseIdx, itemIdx) { return `c${clId}_p${phaseIdx}_i${itemIdx}`; }
 
   function isChecked(clId, phaseIdx, itemIdx) {
-    return !!_data[key(clId, phaseIdx, itemIdx)];
+    const v = _data[key(clId, phaseIdx, itemIdx)];
+    return v ? (typeof v === 'object' ? !!v.checked : !!v) : false;
   }
 
-  /* ── Toggle — writes to Firebase if online, localStorage otherwise ── */
-  function toggle(clId, phaseIdx, itemIdx) {
-    const k       = key(clId, phaseIdx, itemIdx);
-    const newVal  = !_data[k];
-    _data[k]      = newVal;
-    _syncLocalStorage();
+  function getMeta(clId, phaseIdx, itemIdx) {
+    const v = _data[key(clId, phaseIdx, itemIdx)];
+    if (!v || typeof v !== 'object') return null;
+    return { por: v.por, em: v.em, ip: v.ip };
+  }
 
-    if (_online && _dbRef) {
-      _dbRef.child(k).set(newVal || null); // null removes false values to keep DB clean
+  /* ── Toggle ── */
+  async function toggle(clId, phaseIdx, itemIdx) {
+    const k       = key(clId, phaseIdx, itemIdx);
+    const current = isChecked(clId, phaseIdx, itemIdx);
+    const newVal  = !current;
+
+    if (newVal) {
+      const ip  = await _getIP();
+      const entry = {
+        checked: true,
+        por: Auth.displayName() || 'Desconhecido',
+        em:  _timestamp(),
+        ip:  ip,
+      };
+      _data[k] = entry;
+      _syncLocalStorage();
+      if (_online && _dbRef) _dbRef.child(k).set(entry);
+    } else {
+      // Uncheck — remove metadata
+      delete _data[k];
+      _syncLocalStorage();
+      if (_online && _dbRef) _dbRef.child(k).remove();
     }
 
     return newVal;
   }
 
-  /* ── Progress helpers ── */
+  /* ── Progress ── */
   function getChecklistProgress(cl) {
     let total = 0, done = 0;
     cl.phases.forEach((ph, pi) =>
@@ -1432,24 +1672,17 @@ const State = (() => {
     return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
   }
 
-  function onRemoteChange(cb) { _onChangeCallback = cb; }
-  function isOnline() { return _online; }
-
-  function reset() {
-    _data = {};
-    _syncLocalStorage();
-    if (_online && _dbRef) _dbRef.set(null);
-  }
-
-  /* ── load: primeiro localStorage (instantâneo), depois Firebase conecta ── */
   async function load() {
-    _loadLocalStorage(); // dados locais enquanto Firebase carrega
+    _loadLocalStorage();
     await initFirebase();
   }
 
+  function onRemoteChange(cb) { _onChangeCallback = cb; }
+  function isOnline()         { return _online; }
+
   return {
-    load, isChecked, toggle, onRemoteChange, isOnline,
-    getChecklistProgress, getPhaseProgress, getScopeProgress, getGlobalProgress, reset
+    load, isChecked, getMeta, toggle, onRemoteChange, isOnline,
+    getChecklistProgress, getPhaseProgress, getScopeProgress, getGlobalProgress
   };
 })();
 
@@ -1714,6 +1947,7 @@ function renderPhases(cl) {
     // items
     phase.items.forEach((item, itemIdx) => {
       const checked = State.isChecked(cl.id, phaseIdx, itemIdx);
+      const meta    = State.getMeta(cl.id, phaseIdx, itemIdx);
       const delay   = itemIdx * 30;
 
       const row = document.createElement('div');
@@ -1729,14 +1963,20 @@ function renderPhases(cl) {
           <span class="cb-check">✓</span>
           <span class="cb-empty"></span>
         </div>
-        <div class="item-text">${item.text}</div>
+        <div style="flex:1;min-width:0">
+          <div class="item-text">${item.text}</div>
+          <div class="item-meta">${meta ? `✓ ${meta.por} · ${meta.em}` : ''}</div>
+        </div>
         <span class="item-type ${item.type}">${item.type}</span>
       `;
 
-      const handleToggle = (e) => {
-        const nowChecked = State.toggle(cl.id, phaseIdx, itemIdx);
+      const handleToggle = async (e) => {
+        const nowChecked = await State.toggle(cl.id, phaseIdx, itemIdx);
+        const meta       = State.getMeta(cl.id, phaseIdx, itemIdx);
         row.classList.toggle('completed', nowChecked);
         row.setAttribute('aria-checked', String(nowChecked));
+        const metaEl = row.querySelector('.item-meta');
+        if (metaEl) metaEl.textContent = (nowChecked && meta) ? `✓ ${meta.por} · ${meta.em}` : '';
 
         if (nowChecked) {
           const rect = row.getBoundingClientRect();
@@ -1797,6 +2037,10 @@ const App = (() => {
             <span class="global-pill-pct" id="globalPct">0%</span>
           </div>
           <span id="sync-indicator" style="font-size:11px;color:var(--c-muted);white-space:nowrap;margin-left:4px">○ conectando</span>
+          <div class="user-chip" id="user-chip" onclick="App.showLogoutModal()">
+            <span class="user-chip-dot"></span>
+            <span class="user-chip-name" id="user-chip-name">${Auth.displayName() || ''}</span>
+          </div>
         </div>
       </header>
 
@@ -1943,36 +2187,77 @@ const App = (() => {
 
 
   async function init() {
+    // ── 1. Load Firebase SDKs first (needed for Auth)
+    await State.load();
+
+    // ── 2. Check if user is already logged in
+    const user = await Auth.init();
+
+    if (!user) {
+      // Show login screen
+      _setupLoginScreen();
+      return;
+    }
+
+    // ── 3. Already logged in — boot app
+    _bootApp();
+  }
+
+  function _setupLoginScreen() {
+    const btn    = document.getElementById('login-btn');
+    const emailI = document.getElementById('login-email');
+    const passI  = document.getElementById('login-pass');
+    const errEl  = document.getElementById('login-error');
+
+    const doLogin = async () => {
+      const email = emailI.value.trim();
+      const pass  = passI.value;
+      if (!email || !pass) return;
+      btn.disabled = true;
+      btn.textContent = 'Entrando…';
+      errEl.classList.remove('show');
+      try {
+        await Auth.login(email, pass);
+        document.getElementById('login-screen').classList.add('hidden');
+        _bootApp();
+      } catch(e) {
+        errEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
+      }
+    };
+
+    btn.addEventListener('click', doLogin);
+    passI.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+    emailI.addEventListener('keydown', (e) => { if (e.key === 'Enter') passI.focus(); });
+  }
+
+  function _bootApp() {
+    document.getElementById('login-screen').classList.add('hidden');
     buildShell();
     renderOverview();
     updateGlobalProgress();
 
-    // Show loading state in header
-    const pill = document.getElementById('globalPct');
-    if (pill) pill.textContent = '…';
-
-    // Load state (localStorage instant + Firebase async)
-    await State.load();
-
-    // Show online/offline indicator
     const indicator = document.getElementById('sync-indicator');
     if (indicator) {
       indicator.textContent = State.isOnline() ? '● sincronizado' : '○ offline';
       indicator.style.color = State.isOnline() ? 'var(--c-green)' : 'var(--c-muted)';
     }
 
-    // When Firebase pushes remote changes → re-render everything
+    // Remote changes → re-render
     State.onRemoteChange(() => {
       CHECKLISTS.forEach(cl => {
         updateCardProgress(cl.id);
-        // if detail page is open, update items visually
         cl.phases.forEach((ph, pi) => {
-          ph.items.forEach((item, ii) => {
+          ph.items.forEach((_, ii) => {
             const row = document.getElementById(`item-${cl.id}-${pi}-${ii}`);
             if (row) {
               const checked = State.isChecked(cl.id, pi, ii);
+              const meta    = State.getMeta(cl.id, pi, ii);
               row.classList.toggle('completed', checked);
               row.setAttribute('aria-checked', String(checked));
+              const metaEl = row.querySelector('.item-meta');
+              if (metaEl) metaEl.textContent = meta ? `✓ ${meta.por} · ${meta.em}` : '';
             }
           });
           updatePhaseProgress(cl.id, pi);
@@ -1983,13 +2268,41 @@ const App = (() => {
       updateGlobalProgress();
     });
 
-    // Final render with Firebase data
     CHECKLISTS.forEach(cl => updateCardProgress(cl.id));
     updateScopeProgress();
     updateGlobalProgress();
+
+    // Logout handler
+    Auth.onLogout(() => {
+      document.getElementById('app').innerHTML = '';
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-error').classList.remove('show');
+    });
   }
 
-  return { init, openDetail, closeDetail };
+  function _showLogoutModal() {
+    const overlay = document.createElement('div');
+    overlay.className = 'logout-overlay';
+    overlay.innerHTML = `
+      <div class="logout-modal">
+        <h3>Sair da conta?</h3>
+        <p>Você está logado como <strong>${Auth.displayName()}</strong>.</p>
+        <div class="logout-btns">
+          <button class="btn-cancel" id="cancel-logout">Cancelar</button>
+          <button class="btn-logout" id="confirm-logout">Sair</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#cancel-logout').addEventListener('click', () => overlay.remove());
+    overlay.querySelector('#confirm-logout').addEventListener('click', async () => {
+      overlay.remove();
+      await Auth.logout();
+    });
+  }
+
+  return { init, openDetail, closeDetail, showLogoutModal: _showLogoutModal };
 })();
 
 /* ── BOOT ── */
