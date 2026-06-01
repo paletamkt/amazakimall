@@ -1053,7 +1053,10 @@ body::after {
     </div>
     <div class="login-field">
       <label class="login-label" for="login-pass">SENHA</label>
-      <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <div style="position:relative">
+        <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px" />
+        <button type="button" id="toggle-pass" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--c-muted);font-size:18px;line-height:1;padding:4px;transition:color 0.15s" title="Mostrar/ocultar senha">👁</button>
+      </div>
     </div>
     <button class="login-btn" id="login-btn">Entrar</button>
     <div class="login-error" id="login-error">E-mail ou senha incorretos. Tente novamente.</div>
@@ -2208,6 +2211,14 @@ const App = (() => {
     const emailI = document.getElementById('login-email');
     const passI  = document.getElementById('login-pass');
     const errEl  = document.getElementById('login-error');
+
+    const toggleBtn = document.getElementById('toggle-pass');
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passI.type === 'password';
+      passI.type = isPassword ? 'text' : 'password';
+      toggleBtn.textContent = isPassword ? '🙈' : '👁';
+      toggleBtn.style.color = isPassword ? 'var(--c-white)' : 'var(--c-muted)';
+    });
 
     const doLogin = async () => {
       const email = emailI.value.trim();
