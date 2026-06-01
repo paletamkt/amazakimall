@@ -1,0 +1,194 @@
+/* ── CHECKLIST CARD (overview grid) ── */
+.cl-card {
+  position: relative; overflow: hidden;
+  background: var(--c-bg2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+  cursor: pointer;
+  transition:
+    border-color var(--t-mid),
+    transform var(--t-mid) var(--ease-out),
+    box-shadow var(--t-mid);
+  will-change: transform;
+}
+.cl-card:hover {
+  border-color: var(--c-border3);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.cl-card:active { transform: translateY(-1px); }
+
+/* Accent line */
+.cl-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+  opacity: 0;
+  transition: opacity var(--t-mid);
+}
+.cl-card:hover::before { opacity: 1; }
+.cl-card.marketing::before    { background: var(--c-red); }
+.cl-card.operacional::before  { background: var(--c-gold); }
+.cl-card.compartilhado::before{ background: var(--c-blue); }
+
+/* Completed state shimmer */
+.cl-card.all-done::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(46,204,113,0.04) 0%, transparent 60%);
+  border-radius: var(--r-lg);
+  pointer-events: none;
+}
+
+/* Card num */
+.cl-num {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--f-mono); font-size: 10px; color: var(--c-muted);
+  margin-bottom: var(--sp-3); letter-spacing: 0.06em;
+}
+.cl-num-dot {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+}
+.cl-num-dot.marketing    { background: var(--c-red); }
+.cl-num-dot.operacional  { background: var(--c-gold); }
+.cl-num-dot.compartilhado{ background: var(--c-blue); }
+
+/* Card title */
+.cl-title {
+  font-size: 14px; font-weight: 600; color: var(--c-white);
+  line-height: 1.45; margin-bottom: var(--sp-4);
+  min-height: 40px;
+}
+
+/* Card footer */
+.cl-footer {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: var(--sp-3);
+}
+.cl-count  { font-size: 11px; color: var(--c-muted); }
+.cl-pct    { font-family: var(--f-mono); font-size: 12px; font-weight: 500; color: var(--c-white); }
+
+/* Card progress */
+.cl-track {
+  height: 4px; background: var(--c-bg5); border-radius: 2px; overflow: hidden;
+}
+.cl-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.5s var(--ease-out); width: 0%;
+}
+.marketing    .cl-fill { background: linear-gradient(90deg, var(--c-red), var(--c-red-light)); }
+.operacional  .cl-fill { background: linear-gradient(90deg, var(--c-gold), var(--c-gold-light)); }
+.compartilhado.cl-fill { background: linear-gradient(90deg, var(--c-blue), var(--c-blue-light)); }
+
+/* Arrow */
+.cl-arrow {
+  position: absolute; right: var(--sp-4); top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  opacity: 0; font-size: 16px; color: var(--c-muted);
+  transition: opacity var(--t-mid), transform var(--t-mid);
+}
+.cl-card:hover .cl-arrow {
+  opacity: 1; transform: translateY(-50%) translateX(0);
+}
+
+/* Done badge */
+.cl-done-badge {
+  position: absolute; top: var(--sp-3); right: var(--sp-3);
+  background: var(--c-green-dim); color: var(--c-green);
+  border-radius: var(--r-pill); padding: 2px 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+  opacity: 0; transition: opacity var(--t-mid);
+}
+.cl-card.all-done .cl-done-badge { opacity: 1; }
+
+/* ── ITEM ROW ── */
+.item-row {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: 13px var(--sp-4);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  background: var(--c-bg2);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    transform var(--t-fast);
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.item-row:hover {
+  border-color: var(--c-border2);
+  background: var(--c-bg3);
+}
+.item-row:active { transform: scale(0.99); }
+
+/* Completed */
+.item-row.completed {
+  background: var(--c-bg3);
+  border-color: rgba(46,204,113,0.08);
+}
+
+/* Checkbox */
+.item-cb {
+  width: 22px; height: 22px; min-width: 22px;
+  border-radius: var(--r-sm);
+  border: 2px solid var(--c-bg5);
+  background: var(--c-bg4);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+  transition: background var(--t-mid), border-color var(--t-mid), box-shadow var(--t-mid);
+}
+.item-row:hover .item-cb {
+  border-color: var(--c-border3);
+}
+.item-row.completed .item-cb {
+  background: var(--c-green);
+  border-color: var(--c-green);
+  box-shadow: var(--shadow-glow-green);
+  animation: checkPop 0.4s var(--ease-spring);
+}
+.cb-check {
+  display: none; color: #fff;
+  font-size: 13px; font-weight: 800; line-height: 1;
+}
+.cb-empty {
+  display: block; width: 7px; height: 7px;
+  border-radius: 2px; background: var(--c-bg5);
+  transition: background var(--t-fast);
+}
+.item-row:hover .cb-empty { background: var(--c-muted); }
+.item-row.completed .cb-check { display: block; }
+.item-row.completed .cb-empty { display: none; }
+
+/* Item text */
+.item-text {
+  flex: 1; font-size: 14px; color: var(--c-white);
+  line-height: 1.55;
+  transition: color var(--t-mid);
+}
+.item-row.completed .item-text {
+  color: var(--c-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255,255,255,0.15);
+  text-decoration-thickness: 1px;
+}
+
+/* Type badge */
+.item-type {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 7px; border-radius: var(--r-sm);
+  flex-shrink: 0; margin-top: 2px;
+}
+.item-type.A { background: var(--c-blue-dim); color: var(--c-blue); }
+.item-type.E { background: var(--c-green-dim); color: var(--c-green); }
+
+/* ── TYPE BADGE (legend) ── */
+.type-badge {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: var(--r-sm);
+}
+.type-badge.A { background: var(--c-blue-dim);  color: var(--c-blue); }
+.type-badge.E { background: var(--c-green-dim); color: var(--c-green); }
