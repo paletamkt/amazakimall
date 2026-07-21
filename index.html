@@ -318,13 +318,6 @@ body::after {
 /* Header center */
 .header-center { flex: 1; display: flex; align-items: center; justify-content: center; }
 .header-logo-amazaki { height: 26px; width: auto; display: block; }
-.header-logo-partner {
-  display: inline-flex; align-items: center; gap: 8px;
-  margin-left: 16px; padding-left: 16px;
-  border-left: 1px solid var(--c-border2);
-}
-.header-logo-partner-label { font-size: 10px; color: var(--c-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
-.header-logo-arruda { height: 18px; width: auto; display: block; }
 
 /* Global progress pill */
 .global-pill {
@@ -356,6 +349,8 @@ body::after {
 
 .page { display: none; }
 .page.active { display: block; }
+.page-enter-forward { animation: slideLeft 0.35s var(--ease-out); }
+.page-enter-back { animation: slideRight 0.35s var(--ease-out); }
 
 /* ── OVERVIEW ── */
 .overview {
@@ -426,6 +421,15 @@ body::after {
 .scope-meta { font-size: 12px; color: var(--c-muted); display: flex; justify-content: space-between; }
 .scope-meta-pct { font-family: var(--f-mono); color: var(--c-white); font-size: 12px; }
 
+/* Footer */
+.site-footer {
+  max-width: var(--max-w); margin: var(--sp-16) auto var(--sp-10);
+  padding: var(--sp-6) var(--sp-8) 0;
+  border-top: 1px solid var(--c-border);
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-3);
+}
+.footer-logo-arruda { height: 20px; width: auto; opacity: 0.7; }
+.footer-credit { font-size: 12px; color: var(--c-muted); letter-spacing: 0.02em; }
 /* Grid */
 .grid-label-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -1470,6 +1474,31 @@ const Toast = (() => {
   return { show };
 })();
 
+/* ── ANIMATED BARS ── */
+function animateBarWidth(el, pct) {
+  if (!el) return;
+  el.style.width = '0%';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.style.width = pct + '%';
+    });
+  });
+}
+
+function animateNumber(el, to, duration = 900, suffix = '') {
+  if (!el) return;
+  const from = 0;
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(from + (to - from) * eased) + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = to + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
 /* ── CONFETTI ── */
 function spawnConfetti(x, y) {
   const colors = ['#e63946','#c9a84c','#4a90d9','#2ecc71','#ff6b75'];
@@ -1493,8 +1522,8 @@ function updateGlobalProgress() {
   const p = State.getGlobalProgress();
   const bar = document.getElementById('globalFill');
   const pct = document.getElementById('globalPct');
-  if (bar) bar.style.width = p.pct + '%';
-  if (pct) pct.textContent  = p.pct + '%';
+  if (bar) animateBarWidth(bar, p.pct);
+  if (pct) animateNumber(pct, p.pct, 700, '%');
 }
 
 function updateScopeProgress() {
@@ -1503,7 +1532,7 @@ function updateScopeProgress() {
     const bar = document.getElementById(`scope-fill-${scope}`);
     const pct = document.getElementById(`scope-pct-${scope}`);
     const cnt = document.getElementById(`scope-cnt-${scope}`);
-    if (bar) bar.style.width = p.pct + '%';
+    if (bar) animateBarWidth(bar, p.pct);
     if (pct) pct.textContent  = p.pct + '%';
     if (cnt) cnt.textContent  = `${p.done}/${p.total}`;
   });
@@ -1519,7 +1548,7 @@ function updateCardProgress(clId) {
   const cnt  = document.getElementById(`card-cnt-${clId}`);
   const card = document.getElementById(`cl-card-${clId}`);
 
-  if (fill) fill.style.width = p.pct + '%';
+  if (fill) animateBarWidth(fill, p.pct);
   if (pct)  pct.textContent  = p.pct + '%';
   if (cnt)  cnt.textContent  = `${p.done}/${p.total} itens`;
   if (card) card.classList.toggle('all-done', p.pct === 100);
@@ -1534,7 +1563,7 @@ function updateDetailProgress(clId) {
   const label = document.getElementById(`detail-pct-${clId}`);
   const banner = document.getElementById(`done-banner-${clId}`);
 
-  if (bar)   bar.style.width = p.pct + '%';
+  if (bar)   animateBarWidth(bar, p.pct);
   if (label) label.textContent = `${p.done}/${p.total} · ${p.pct}%`;
   if (banner) banner.classList.toggle('show', p.pct === 100);
 }
@@ -1548,7 +1577,7 @@ function updatePhaseProgress(clId, phaseIdx) {
   const bar   = document.getElementById(`phase-fill-${clId}-${phaseIdx}`);
   const label = document.getElementById(`phase-lbl-${clId}-${phaseIdx}`);
 
-  if (bar)   bar.style.width = p.pct + '%';
+  if (bar)   animateBarWidth(bar, p.pct);
   if (label) label.textContent = `${p.done}/${p.total}`;
 }
 
@@ -1556,8 +1585,8 @@ function updatePhaseProgress(clId, phaseIdx) {
 function renderOverview() {
   // stats
   const totalItems = CHECKLISTS.reduce((s, c) => s + c.phases.reduce((ss, p) => ss + p.items.length, 0), 0);
-  document.getElementById('stat-checklists').textContent = String(CHECKLISTS.length);
-  document.getElementById('stat-items').textContent      = totalItems;
+  animateNumber(document.getElementById('stat-checklists'), CHECKLISTS.length, 700);
+  animateNumber(document.getElementById('stat-items'), totalItems, 900);
 
   // scope cards
   ['marketing', 'operacional', 'compartilhado'].forEach(scope => {
@@ -1565,7 +1594,7 @@ function renderOverview() {
     const bar = document.getElementById(`scope-fill-${scope}`);
     const pct = document.getElementById(`scope-pct-${scope}`);
     const cnt = document.getElementById(`scope-cnt-${scope}`);
-    if (bar) bar.style.width = p.pct + '%';
+    if (bar) animateBarWidth(bar, p.pct);
     if (pct) pct.textContent  = p.pct + '%';
     if (cnt) cnt.textContent  = `${p.done}/${p.total}`;
   });
@@ -1593,12 +1622,13 @@ function renderOverview() {
         <span class="cl-pct"   id="card-pct-${cl.id}">${p.pct}%</span>
       </div>
       <div class="cl-track">
-        <div class="cl-fill" id="card-fill-${cl.id}" style="width:${p.pct}%"></div>
+        <div class="cl-fill" id="card-fill-${cl.id}"></div>
       </div>
       <span class="cl-arrow">→</span>
     `;
     card.addEventListener('click', () => App.openDetail(cl.id));
     grid.appendChild(card);
+    animateBarWidth(document.getElementById(`card-fill-${cl.id}`), p.pct);
   });
 
   updateGlobalProgress();
@@ -1645,7 +1675,7 @@ function renderDetail(clId) {
               <span id="detail-pct-${cl.id}">${p.done}/${p.total} · ${p.pct}%</span>
             </div>
             <div class="detail-progress-track">
-              <div class="detail-progress-fill ${cl.scope}" id="detail-fill-${cl.id}" style="width:${p.pct}%"></div>
+              <div class="detail-progress-fill ${cl.scope}" id="detail-fill-${cl.id}"></div>
             </div>
           </div>
         </div>
@@ -1662,6 +1692,7 @@ function renderDetail(clId) {
   `;
 
   container.appendChild(page);
+  animateBarWidth(document.getElementById(`detail-fill-${cl.id}`), p.pct);
 
   // back button
   page.querySelector(`#back-btn-${clId}`).addEventListener('click', () => App.closeDetail());
@@ -1690,7 +1721,7 @@ function renderPhases(cl) {
         <span class="phase-name">${phase.label}</span>
         <div class="phase-mini-progress">
           <div class="phase-mini-track">
-            <div class="phase-mini-fill ${cl.scope}" id="phase-fill-${cl.id}-${phaseIdx}" style="width:${phP.pct}%"></div>
+            <div class="phase-mini-fill ${cl.scope}" id="phase-fill-${cl.id}-${phaseIdx}"></div>
           </div>
           <span class="phase-mini-label" id="phase-lbl-${cl.id}-${phaseIdx}">${phP.done}/${phP.total}</span>
         </div>
@@ -1819,6 +1850,7 @@ function renderPhases(cl) {
     }
 
     container.appendChild(section);
+    animateBarWidth(document.getElementById(`phase-fill-${cl.id}-${phaseIdx}`), phP.pct);
   });
 }
 
@@ -1848,10 +1880,6 @@ const App = (() => {
           </div>
           <div class="header-center">
             <img src="img/logo-amazaki-preta.png" alt="Amazaki mall" class="header-logo-amazaki" />
-            <div class="header-logo-partner">
-              <span class="header-logo-partner-label">uma parceria com</span>
-              <img src="img/logo-arruda.png" alt="Construtora Arruda" class="header-logo-arruda" />
-            </div>
           </div>
           <div class="global-pill">
             <span class="global-pill-label">Progresso geral</span>
@@ -1975,6 +2003,12 @@ const App = (() => {
       <!-- Detail pages container -->
       <div id="detail-container"></div>
 
+      <!-- Footer -->
+      <footer class="site-footer">
+        <img src="img/logo-arruda.png" alt="Construtora Arruda" class="footer-logo-arruda" />
+        <span class="footer-credit">Uma parceria entre Paleta Marketing e Construtora Arruda</span>
+      </footer>
+
       <!-- Toast -->
       <div class="toast" id="toast">
         <span class="toast-icon" id="toastIcon">✓</span>
@@ -1983,16 +2017,22 @@ const App = (() => {
     `;
   }
 
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  function showPage(id, direction = 'forward') {
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('active', 'page-enter-forward', 'page-enter-back');
+    });
     const el = document.getElementById(id);
-    if (el) el.classList.add('active');
+    if (el) {
+      el.classList.add('active');
+      void el.offsetWidth;
+      el.classList.add(direction === 'back' ? 'page-enter-back' : 'page-enter-forward');
+    }
   }
 
   function openDetail(clId) {
     currentDetailId = clId;
     renderDetail(clId); // build if not already
-    showPage(`detail-page-${clId}`);
+    showPage(`detail-page-${clId}`, 'forward');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
 
@@ -2000,7 +2040,7 @@ const App = (() => {
 
   function closeDetail() {
     currentDetailId = null;
-    showPage('overview-page');
+    showPage('overview-page', 'back');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // update overview cards
