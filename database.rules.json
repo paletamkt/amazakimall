@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "checklist": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.token.email == 'luiz@paletamarketing.com.br'"
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}
